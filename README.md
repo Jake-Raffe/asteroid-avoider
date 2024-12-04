@@ -1,5 +1,10 @@
 ## A vertical scrolling asteroid avoider game in SCALA
 
-### Set Up and Usage ...
+### Set Up
 
-[//]: # (This is a normal sbt project. You can compile code with `sbt compile`, run it with `sbt run`, and `sbt console` will start a Scala 3 REPL.)
+The app requires standard sbt set up. Compile with `sbt compile`, run with `sbt run`.
+Running the application will start the game in a new window.
+
+### How to Play
+
+...

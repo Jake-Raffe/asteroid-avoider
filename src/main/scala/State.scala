@@ -1,32 +1,41 @@
 import ConfigConstants.*
-import State.{checkShipCollision, square}
+import State.{shipHasCrashed, square}
+import scalafx.beans.property.BooleanProperty
 import scalafx.scene.paint.Color
-import scalafx.scene.paint.Color.{Red, White}
+import scalafx.scene.paint.Color.{Black, Red, White}
 import scalafx.scene.shape.Rectangle
 
 import scala.util.Random
 
-case class State(shipPosition: ObjectLocation, asteroids: List[ObjectLocation]) {
+case class State(shipPosition: ObjectLocation, asteroids: List[ObjectLocation], gameInMotion: Boolean, collision: Boolean) {
+  private val asteroidColour: Color = if (collision) Red else White
+  private val shipColour: Color     = if (collision) White else Red
 
-  def generateAllObjects: List[Rectangle] = asteroids.map(square(_, White)).appended(square(shipPosition, Red))
+  def startGame(): State = State(shipPosition, asteroids, gameInMotion = true, collision)
+  def pauseGame(): State = State(shipPosition, asteroids, gameInMotion = false, collision)
 
-  def moveShip(direction: MovementDirection): State = {
-    val attemptedPosition: Double = shipPosition.xAxis + direction.xAxisMovement
-    val shipOutOfBounds: Boolean  = attemptedPosition < 0 || attemptedPosition > sceneXBoundary
-    val shipCrashed: Boolean      = checkShipCollision(ObjectLocation(attemptedPosition, sceneYBoundary), asteroids)
-    // TODO collision isn't working (objects are technically before sceneYBoundary?)
+  def generateAllObjects: List[Rectangle] = asteroids.map(square(_, asteroidColour)).appended(square(shipPosition, shipColour))
 
-    val newShipPosition: ObjectLocation =
-      if (shipOutOfBounds) shipPosition else if (shipCrashed) shipStartPosition else shipPosition.copy(xAxis = attemptedPosition)
-    State(newShipPosition, asteroids)
-  }
+  def moveShip(direction: MovementDirection): State =
+    if (gameInMotion) {
+      val attemptedPosition: Double = shipPosition.xAxis + direction.xAxisMovement
+      val shipOutOfBounds: Boolean  = attemptedPosition < 0 || attemptedPosition > sceneXBoundary
+
+      if (shipHasCrashed(ObjectLocation(attemptedPosition, sceneYBoundary), asteroids)) {
+        State(shipPosition, asteroids, gameInMotion = false, collision = true)
+      } else {
+        val newShipPosition: ObjectLocation = if (shipOutOfBounds) shipPosition else shipPosition.copy(xAxis = attemptedPosition)
+        State(newShipPosition, asteroids, gameInMotion, collision)
+      }
+    } else State(shipPosition, asteroids, gameInMotion, collision)
 
   def verticalScroll(): State = {
-    val newAsteroid                 = createNewAsteroid(asteroids.headOption.getOrElse(shipStartPosition))
-    val scrolledAsteroids           = asteroids.flatMap(moveAsteroid).appended(newAsteroid)
-    val resetIfShipCrashed: Boolean = checkShipCollision(shipPosition, asteroids)
+    val newAsteroid       = createNewAsteroid(asteroids.headOption.getOrElse(shipStartPosition))
+    val scrolledAsteroids = asteroids.flatMap(moveAsteroid).appended(newAsteroid)
+    val stopIfShipHasCrashed: (Boolean, Boolean) =
+      if (shipHasCrashed(shipPosition, scrolledAsteroids)) (false, true) else (true, false) // TODO this is bad, make it better
 
-    if (resetIfShipCrashed) initialState else State(shipPosition, scrolledAsteroids)
+    State(shipPosition, scrolledAsteroids, gameInMotion = stopIfShipHasCrashed._1, collision = stopIfShipHasCrashed._2)
   }
 
   // Scrolls single asteroid one step down, if past boundary then asteroid is removed
@@ -56,6 +65,14 @@ object State {
     fill = colour
   }
 
-  def checkShipCollision(shipLocation: ObjectLocation, asteroids: List[ObjectLocation]): Boolean =
-    asteroids.forall(_ == shipLocation) // TODO add hitbox around ship and asteroids, not just x-coordinate
+  def shipHasCrashed(shipLocation: ObjectLocation, asteroids: List[ObjectLocation]): Boolean = {
+    val asteroid    = asteroids.find(_.yAxis == sceneYBoundary).getOrElse(ObjectLocation(0, 0))
+    val asteroidHB  = HitBox(asteroid.xAxis, asteroid.xAxis + objectWidth)
+    val shipHB      = HitBox(shipLocation.xAxis, shipLocation.xAxis + objectWidth)
+    val noCollision = asteroidHB.rightBoundary < shipHB.leftBoundary || asteroidHB.leftBoundary > shipHB.rightBoundary
+    if (!noCollision) println("*** SHIP CRASHED ***")
+    !noCollision
+  } // TODO this works when ship moves into asteroid but not when asteroid scrolls onto ship
+
+  private case class HitBox(leftBoundary: Double, rightBoundary: Double)
 }

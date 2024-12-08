@@ -5,16 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8a9ce60d-2faa-4efa-8c96-ac9ec500089c" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/scala/ConfigConstants.scala" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/scala/Game.scala" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/scala/MovementDirection.scala" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/scala/State.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.sbt" beforeDir="false" afterPath="$PROJECT_DIR$/build.sbt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/GameField.scala" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/Main.scala" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/ConfigConstants.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/ConfigConstants.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/Game.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/Game.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/State.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/State.scala" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -25,7 +25,7 @@ object Tetris extends JFXApp3 {
 
     frame.onChange {
       println(s"--- frame: ${frame.value}")
-      if (state.value.gameInMotion) state.update(state.value.shapeDescends())
+      if (state.value.gameInMotion) state.update(state.value.lowerShapeOnce())
     }
 
     stage = new JFXApp3.PrimaryStage {
@@ -46,8 +46,8 @@ object Tetris extends JFXApp3 {
     }
 
     stage.setOnShown { _ =>
-      stage.width = stage.scene().getWidth + objectWidth
-      stage.height = stage.scene().getHeight + (3 * objectWidth)
+      stage.width = stage.scene().getWidth + (2 * objectWidth)
+      stage.height = stage.scene().getHeight + (4 * objectWidth)
     }
 
     gameLoop()
@@ -79,6 +79,9 @@ object Tetris extends JFXApp3 {
       case KeyCode.RIGHT =>
         println(">>> Right >>>")
         state.update(state.value.moveShape(Right))
+      case KeyCode.DOWN =>
+        println("""\\\ Down ///""")
+        state.update(state.value.dropShape())
       case KeyCode.R =>
         println("*** Game RESET ***")
         resetGame()

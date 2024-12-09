@@ -1,4 +1,9 @@
-import ConfigConstants.*
+package asteroidAvoider
+
+import asteroidAvoider.AsteroidAvoider.stage
+import asteroidAvoider.ConfigGameConstants.*
+import common.*
+import common.ConfigGameConstants.objectWidth
 import javafx.scene.input.{KeyCode, KeyEvent}
 import scalafx.application.{JFXApp3, Platform}
 import scalafx.beans.property.*
@@ -12,7 +17,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.Random
 
-object Game extends JFXApp3 {
+object AsteroidAvoider extends JFXApp3 {
 
   override def start(): Unit = {
     val state: ObjectProperty[State]      = ObjectProperty(initialState)

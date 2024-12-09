@@ -1,5 +1,9 @@
-import ConfigConstants.*
-import State.{shipHasCrashed, square}
+package asteroidAvoider
+
+import asteroidAvoider.ConfigGameConstants.*
+import asteroidAvoider.State.{shipHasCrashed, square}
+import common.ConfigGameConstants.objectWidth
+import common.{HitBox, MovementDirection, ObjectLocation}
 import scalafx.beans.property.BooleanProperty
 import scalafx.scene.paint.Color
 import scalafx.scene.paint.Color.{Black, Red, White}
@@ -74,6 +78,4 @@ object State {
       !noCollision
     }
   }
-
-  private case class HitBox(leftBoundary: Double, rightBoundary: Double)
 }

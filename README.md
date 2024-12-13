@@ -14,7 +14,7 @@ ___
 
 ### How to Play
 
-#### Common:
+#### General:
 - Press `SPACE` to start or pause the game.
 - Press `R` to reset the game.
 - Game speed will increase over time.

@@ -25,9 +25,11 @@ object Tetris extends JFXApp3 {
 
     frame.onChange {
       println(s"--- frame: ${frame.value}")
-      if (state.value.gameInMotion) state.update(state.value.lowerShapeOnce())
+      if (state.value.gameState == GameInProgress) state.update(state.value.lowerShapeOnce())
     }
 
+//    frameIncrementor.update <== when(state.value.gameState == GameInProgress) choose(1) otherwise(0)
+    
     stage = new JFXApp3.PrimaryStage {
       title = "Tetris Rip-Off"
       width = sceneXBoundary
@@ -35,10 +37,20 @@ object Tetris extends JFXApp3 {
       scene = new Scene {
         fill = Black
         content = state.value.generateAllObjects
+//        content = new StackPane {
+//          children = state.value.generateAllObjects ++ List(State.pausedDisplayBox)
+//        }
         onKeyPressed = handleKeyPress(_)
         state.onChange {
-          if (state.value.collision) frameIncrementor.update(0)
+          if (state.value.gameState == Collision) frameIncrementor.update(0)
+          
+//          State.pausedDisplayBox.visible = state.value.gameState == GamePaused
+//          val pauseBox = if ()
+//          val display = state.value.generateAllObjects ++ List(State.pausedDisplayBox)
           Platform.runLater {
+//            content = new StackPane {
+//              children = display
+//            }
             content = state.value.generateAllObjects
           }
         }
@@ -65,7 +77,7 @@ object Tetris extends JFXApp3 {
     }
 
     def handleKeyPress(key: KeyEvent): Unit = key.getCode match {
-      case KeyCode.SPACE if state.value.gameInMotion =>
+      case KeyCode.SPACE if state.value.gameState == GameInProgress =>
         println(">>> Game PAUSED <<<")
         frameIncrementor.update(0)
         state.update(state.value.pauseGame())

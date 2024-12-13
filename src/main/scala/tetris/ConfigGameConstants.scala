@@ -1,7 +1,7 @@
 package tetris
 
 import common.ConfigGameConstants.objectWidth
-import common.ObjectLocation
+import common.{GamePaused, ObjectLocation}
 
 object ConfigGameConstants {
 
@@ -13,7 +13,7 @@ object ConfigGameConstants {
 
   val initialPosition: ObjectLocation = ObjectLocation(sceneXBoundary / 2, 0)
   val initialSquare: Shape            = Square(initialPosition)
-  val initialState: State             = State(initialSquare, ExistingBlocks(LowerBoundary.squares), gameInMotion = false, collision = false)
+  val initialState: State             = State(initialSquare, ExistingBlocks(LowerBoundary.squares), GamePaused)
 
   val frameScrollMap: Map[Int, Long] =
     Map(

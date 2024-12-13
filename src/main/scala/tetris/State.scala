@@ -2,6 +2,10 @@ package tetris
 
 import asteroidAvoider.ConfigGameConstants.*
 import asteroidAvoider.State.{shipHasCrashed, square}
+import scalafx.scene.text.Text
+import scalafx.scene.text.Font
+import scalafx.geometry.Pos
+import scalafx.scene.layout.VBox
 import common.*
 import common.ConfigGameConstants.objectWidth
 import scalafx.beans.property.BooleanProperty
@@ -14,15 +18,15 @@ import tetris.ConfigGameConstants.{initialPosition, initialSquare}
 import scala.annotation.tailrec
 import scala.util.Random
 
-case class State(currentShape: Shape, existingBlocks: ExistingBlocks, gameInMotion: Boolean, collision: Boolean) {
+case class State(currentShape: Shape, existingBlocks: ExistingBlocks, gameState: GameState) {
 
-  def startGame(): State = State(currentShape, existingBlocks, gameInMotion = true, collision)
-  def pauseGame(): State = State(currentShape, existingBlocks, gameInMotion = false, collision)
+  def startGame(): State = State(currentShape, existingBlocks, GameInProgress)
+  def pauseGame(): State = State(currentShape, existingBlocks, GamePaused)
 
   def generateAllObjects: List[Rectangle] = existingBlocks.toDisplayObjects ++ currentShape.toDisplayObjects
 
   def moveShape(direction: MovementDirection): State =
-    if (gameInMotion) {
+    if (gameState == GameInProgress) {
       val newPosition = direction match {
         case Left if currentShape.leftBoundary == 0                => currentShape
         case Left                                                  => currentShape.moveLeft()
@@ -30,14 +34,14 @@ case class State(currentShape: Shape, existingBlocks: ExistingBlocks, gameInMoti
         case Right                                                 => currentShape.moveRight()
       }
       if (objectCollision(newPosition))
-        State(createNewShape(currentShape), existingBlocks.addShape(currentShape), gameInMotion, collision)
+        State(createNewShape(currentShape), existingBlocks.addShape(currentShape), gameState)
       else
-        State(newPosition, existingBlocks, gameInMotion, collision)
-    } else State(currentShape, existingBlocks, gameInMotion, collision)
+        State(newPosition, existingBlocks, gameState)
+    } else State(currentShape, existingBlocks, gameState)
 
   def lowerShapeOnce(): State =
-    if (objectCollision(currentShape.moveDown())) State(createNewShape(currentShape), existingBlocks.addShape(currentShape), gameInMotion, collision)
-    else State(currentShape.moveDown(), existingBlocks, gameInMotion, collision)
+    if (objectCollision(currentShape.moveDown())) State(createNewShape(currentShape), existingBlocks.addShape(currentShape), gameState)
+    else State(currentShape.moveDown(), existingBlocks, gameState)
 
   def dropShape(): State = {
     @tailrec
@@ -47,7 +51,7 @@ case class State(currentShape: Shape, existingBlocks: ExistingBlocks, gameInMoti
       else dropShapeTillBottom(newPosition.moveDown(), inc + 1)
     }
 
-    State(createNewShape(currentShape), dropShapeTillBottom(currentShape, 0), gameInMotion, collision)
+    State(createNewShape(currentShape), dropShapeTillBottom(currentShape, 0), gameState)
   }
 
   def objectCollision(shape: Shape): Boolean = shape.buildShape.exists(existingBlocks.squares.contains(_))
@@ -59,6 +63,18 @@ case class State(currentShape: Shape, existingBlocks: ExistingBlocks, gameInMoti
     while (newShapeType == previousShapeType)
       newShapeType = random.nextInt(maxShapeTypes) + 1
     newShapeMap(newShapeType)(initialPosition)
+  }
+
+  val pausedDisplayBox: VBox = {
+    val pausedText: Text = new Text("Game Paused") {
+      fill = White
+      font = Font("Ariel", 30)
+    }
+    new VBox {
+      alignment = Pos.Center
+      children = pausedText
+      visible <== BooleanProperty(gameState == GamePaused)
+    }
   }
 }
 

@@ -1,6 +1,9 @@
-object ConfigConstants {
+package asteroidAvoider
 
-  val objectWidth: Double = 25
+import common.ConfigGameConstants.objectWidth
+import common.ObjectLocation
+
+object ConfigGameConstants {
 
   val sceneXBoundary: Double = 600
   val sceneYBoundary: Double = 600
@@ -9,8 +12,7 @@ object ConfigConstants {
   val shipYPosition: Double              = sceneYBoundary - (2 * objectWidth)
   val shipStartPosition: ObjectLocation  = ObjectLocation(shipStartXPosition, shipYPosition)
 
-  val scrollSpeed: Long      = 800
-  val movementAmount: Double = objectWidth
+  val scrollSpeed: Long = 800
 
   val initialState: State = State(shipStartPosition, List.empty[ObjectLocation], gameInMotion = false, collision = false)
   val initialStateWithAsteroids: State =

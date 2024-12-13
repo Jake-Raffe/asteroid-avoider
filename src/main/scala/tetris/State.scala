@@ -1,19 +1,17 @@
 package tetris
 
-import asteroidAvoider.ConfigGameConstants.*
-import asteroidAvoider.State.{shipHasCrashed, square}
-import scalafx.scene.text.Text
-import scalafx.scene.text.Font
-import scalafx.geometry.Pos
-import scalafx.scene.layout.VBox
 import common.*
 import common.ConfigGameConstants.objectWidth
 import scalafx.beans.property.BooleanProperty
+import scalafx.geometry.Pos
+import scalafx.scene.layout.VBox
 import scalafx.scene.paint.Color
-import scalafx.scene.paint.Color.{Black, Grey, Red, White}
-import scalafx.scene.shape.Rectangle
+import scalafx.scene.paint.Color.{Black, Blue, Green, Grey, Red, White}
+import scalafx.scene.shape.{Line, Rectangle}
+import scalafx.scene.text.{Font, Text}
+import tetris.ConfigGameConstants.*
 import tetris.ConfigGameConstants.initialSquare.{maxShapeTypes, newShapeMap}
-import tetris.ConfigGameConstants.{initialPosition, initialSquare}
+import tetris.State.*
 
 import scala.annotation.tailrec
 import scala.util.Random
@@ -22,6 +20,11 @@ case class State(currentShape: Shape, existingBlocks: ExistingBlocks, gameState:
 
   def startGame(): State = State(currentShape, existingBlocks, GameInProgress)
   def pauseGame(): State = State(currentShape, existingBlocks, GamePaused)
+
+  def checkIfOverThreshold(): State = {
+    val updatedGameState = if (existingBlocks.squares.exists(_.yAxis < thresholdLine.startY.toDouble)) Collision else gameState
+    State(currentShape, existingBlocks, updatedGameState)
+  }
 
   def generateAllObjects: List[Rectangle] = existingBlocks.toDisplayObjects ++ currentShape.toDisplayObjects
 
@@ -65,17 +68,22 @@ case class State(currentShape: Shape, existingBlocks: ExistingBlocks, gameState:
     newShapeMap(newShapeType)(initialPosition)
   }
 
-  val pausedDisplayBox: VBox = {
-    val pausedText: Text = new Text("Game Paused") {
-      fill = White
-      font = Font("Ariel", 30)
-    }
+  def displayText(): VBox =
     new VBox {
+      layoutX = gameState match {
+        case GameAtStart => sceneXBoundary / 4
+        case Collision   => sceneXBoundary / 5
+        case _           => sceneXBoundary / 3
+      }
+      layoutY = sceneYBoundary / 3
       alignment = Pos.Center
-      children = pausedText
-      visible <== BooleanProperty(gameState == GamePaused)
+      children = gameState match {
+        case GameAtStart => startGameText
+        case Collision   => gameOverText
+        case _           => pausedText
+      }
+      visible = gameState != GameInProgress
     }
-  }
 }
 
 object State {
@@ -86,5 +94,31 @@ object State {
     width = objectWidth
     height = objectWidth
     fill = colour
+  }
+
+  val thresholdLine: Line = new Line {
+    startX = 0
+    startY = 140
+    endX = sceneXBoundary + 2 * objectWidth
+    endY = 140
+    stroke = Color.Red
+    strokeWidth = 2
+    strokeDashArray.addAll(10.0, 5.0) // Pattern: 10px dash, 5px gap
+  }
+
+  val startGameText: Text = new Text("Press SPACE to Start!") {
+    fill = Black
+    stroke = White
+    font = Font("Ariel", 30)
+  }
+  val pausedText: Text = new Text("Game Paused") {
+    fill = Black
+    stroke = White
+    font = Font("Ariel", 30)
+  }
+  val gameOverText: Text = new Text("GAME OVER! Press R to restart") {
+    fill = Black
+    stroke = White
+    font = Font("Ariel", 30)
   }
 }

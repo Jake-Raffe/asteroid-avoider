@@ -9,7 +9,7 @@
   <component name="ChangeListManager">
     <list default="true" id="8a9ce60d-2faa-4efa-8c96-ac9ec500089c" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/common/GameState.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/common/GameState.scala" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/scala/tetris/ConfigGameConstants.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/tetris/ConfigGameConstants.scala" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/scala/tetris/State.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/tetris/State.scala" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/scala/tetris/Tetris.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/tetris/Tetris.scala" afterDir="false" />
@@ -63,11 +63,11 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "SDKs",
-    "project.structure.proportion": "0.0",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.20229885",
     "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "reference.settingsdialog.project.grazie",
+    "settings.editor.selected.configurable": "Errors",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>

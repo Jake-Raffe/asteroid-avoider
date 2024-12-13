@@ -57,7 +57,7 @@ case class Line(centralPoint: ObjectLocation) extends Shape {
 
 case class ExistingBlocks(squares: List[ObjectLocation]) {
   def addShape(newShape: Shape): ExistingBlocks = ExistingBlocks(squares ++ newShape.buildShape)
-  val toDisplayObjects: List[Rectangle]         = squares.map(s => square(s, if (s.yAxis == sceneYBoundary) Grey else White))
+  val toDisplayObjects: List[Rectangle]         = squares.map(s => square(s, if (s.yAxis == sceneYBoundary) Grey else Silver))
 }
 
 object LowerBoundary {

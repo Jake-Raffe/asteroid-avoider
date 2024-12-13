@@ -31,4 +31,4 @@ ___
   the falling shape is added to the existing structure.
   A new random shape will then be generated.
 - Press the `DOWN` arrow key to immediately descend the shape till collision.
-- The game will end when the structure extends above the top of the scene.
+- The game will end when the structure extends above the red threshold line.

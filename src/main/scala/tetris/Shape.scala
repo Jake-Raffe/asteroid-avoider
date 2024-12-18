@@ -12,14 +12,13 @@ import scala.annotation.tailrec
 trait Shape {
   val shapeType: Int
   val maxShapeTypes: Int = 8
-  def centralPoint: ObjectLocation
+  def centralPoint: ObjectLocation // TODO can some of these be vals without crashing?
   def orientation: Orientation
   def lowerBoundary: ObjectLocation
   def leftBoundary: Double
   def rightBoundary: Double
 
   def toDisplayObjects: List[Rectangle] = buildShape.map(square(_, Green))
-//  val toDisplayObjects: List[Rectangle] // TODO have the implementation here?
 
   def neutralPosition: List[ObjectLocation]
   def clockwisePosition: List[ObjectLocation]
@@ -68,7 +67,6 @@ case class Square(centralPoint: ObjectLocation, orientation: Orientation) extend
   override def lowerBoundary: ObjectLocation               = centralPoint.moveDown
   override def leftBoundary: Double                        = centralPoint.moveLeft.xAxis
   override def rightBoundary: Double                       = centralPoint.moveRight.xAxis
-  // override def toDisplayObjects: List[Rectangle]           = buildShape.map(square(_, Green))
 
   override protected def createNewShape(newCentralPoint: ObjectLocation, newOrientation: Orientation): Square =
     Square(newCentralPoint, newOrientation)
@@ -99,7 +97,6 @@ case class Line(centralPoint: ObjectLocation, orientation: Orientation) extends 
     case Clockwise | AntiClockwise => centralPoint.moveRight.moveRight.xAxis
     case Inverse                   => centralPoint.xAxis
   }
-  // override def toDisplayObjects: List[Rectangle] = buildShape.map(square(_, Green))
 
   override protected def createNewShape(newCentralPoint: ObjectLocation, newOrientation: Orientation): Line =
     Line(newCentralPoint, newOrientation)
@@ -148,7 +145,6 @@ case class RectangleShape(centralPoint: ObjectLocation, orientation: Orientation
     case Neutral | AntiClockwise | Inverse => centralPoint.moveRight.xAxis
     case Clockwise                         => centralPoint.moveRight.moveRight.xAxis
   }
-  // override def toDisplayObjects: List[Rectangle] = buildShape.map(square(_, Green))
 
   override protected def createNewShape(newCentralPoint: ObjectLocation, newOrientation: Orientation): RectangleShape =
     RectangleShape(newCentralPoint, newOrientation)
@@ -176,7 +172,6 @@ case class LShape(centralPoint: ObjectLocation, orientation: Orientation) extend
     case Neutral | AntiClockwise | Inverse => centralPoint.moveRight.xAxis
     case Clockwise                         => centralPoint.moveRight.moveRight.xAxis
   }
-  // override def toDisplayObjects: List[Rectangle] = buildShape.map(square(_, Green))
 
   override protected def createNewShape(newCentralPoint: ObjectLocation, newOrientation: Orientation): LShape =
     LShape(newCentralPoint, newOrientation)
@@ -204,7 +199,6 @@ case class LShapeRev(centralPoint: ObjectLocation, orientation: Orientation) ext
     case Neutral | AntiClockwise | Inverse => centralPoint.moveRight.xAxis
     case Clockwise                         => centralPoint.moveRight.moveRight.xAxis
   }
-  // override def toDisplayObjects: List[Rectangle] = buildShape.map(square(_, Green))
 
   override protected def createNewShape(newCentralPoint: ObjectLocation, newOrientation: Orientation): LShapeRev =
     LShapeRev(newCentralPoint, newOrientation)
@@ -232,7 +226,6 @@ case class Zigzag(centralPoint: ObjectLocation, orientation: Orientation) extend
     case Clockwise | AntiClockwise | Inverse => centralPoint.moveRight.xAxis
     case Neutral                             => centralPoint.moveRight.moveRight.xAxis
   }
-  // override def toDisplayObjects: List[Rectangle] = buildShape.map(square(_, Green))
 
   override protected def createNewShape(newCentralPoint: ObjectLocation, newOrientation: Orientation): Zigzag =
     Zigzag(newCentralPoint, newOrientation)
@@ -260,7 +253,6 @@ case class ZigzagRev(centralPoint: ObjectLocation, orientation: Orientation) ext
     case Clockwise | AntiClockwise | Inverse => centralPoint.moveRight.xAxis
     case Neutral                             => centralPoint.moveRight.moveRight.xAxis
   }
-  // override def toDisplayObjects: List[Rectangle] = buildShape.map(square(_, Green))
 
   override protected def createNewShape(newCentralPoint: ObjectLocation, newOrientation: Orientation): ZigzagRev =
     ZigzagRev(newCentralPoint, newOrientation)
@@ -288,19 +280,47 @@ case class TShape(centralPoint: ObjectLocation, orientation: Orientation) extend
     case Clockwise | AntiClockwise | Inverse => centralPoint.moveRight.xAxis
     case Neutral                             => centralPoint.moveRight.moveRight.xAxis
   }
-  // override def toDisplayObjects: List[Rectangle] = buildShape.map(square(_, Green))
 
   override protected def createNewShape(newCentralPoint: ObjectLocation, newOrientation: Orientation): TShape =
     TShape(newCentralPoint, newOrientation)
 }
 
 case class ExistingBlocks(squares: List[ObjectLocation]) {
-  def addShape(newShape: Shape): ExistingBlocks = ExistingBlocks(squares ++ newShape.buildShape)
-  val toDisplayObjects: List[Rectangle]         = squares.map(s => square(s, if (s.yAxis == sceneYBoundary) Grey else Silver))
+  def addShape(newShape: Shape): ExistingBlocks = ExistingBlocks(removeRowIfFull(squares ++ newShape.buildShape))
+
+  def removeRowIfFull(allBlocks: List[ObjectLocation]): List[ObjectLocation] = {
+    val sceneWidthThreshold    = 200
+    val blocksNeededForFullRow = sceneWidthThreshold / objectWidth // TODO make this correct
+    println("==blocksNeededForFullRow: " + blocksNeededForFullRow)
+    val blocksListInAscendingOrder = allBlocks.sortBy(-_.yAxis) // TODO is the floor boundary included in all blocks? If so filter them out
+    // 2.2 method takes two params,
+    //    - the blocks left to check
+    //    - the blocks that remain
+    // 3 method output is blocks that remain when there are no more blocks left to check
+    // 2. create two lists, one with all blocks of the same height as head (the lowest block), one with all others
+
+    @tailrec
+    def checkIfNextRowIsFull(remainingBlocks: List[ObjectLocation], checkedBlocks: List[ObjectLocation]): List[ObjectLocation] =
+      remainingBlocks match {
+        case head :: tail =>
+          val (blocksInRow, otherBlocks) = tail.partition(_.yAxis == head.yAxis) match {
+            case (same, diff) => (head :: same, diff)
+          }
+          val rowIsFull = blocksInRow.length == blocksNeededForFullRow // TODO if row is full and removed, all higher blocks must be moved down
+          println("==blocksInRow: " + blocksInRow.length)
+          val boxesToRemain = if (rowIsFull) checkedBlocks else blocksInRow ++ checkedBlocks
+          checkIfNextRowIsFull(otherBlocks, boxesToRemain)
+        case Nil => checkedBlocks
+      }
+
+    checkIfNextRowIsFull(blocksListInAscendingOrder, List.empty[ObjectLocation])
+  }
+
+  val toDisplayObjects: List[Rectangle] = squares.map(s => square(s, if (s.yAxis == sceneYBoundary) Grey else Silver))
 }
 
 object LowerBoundary {
-  private def createBoundary(): List[ObjectLocation] = {
+  private def createBoundary(): List[ObjectLocation] = { // TODO boundary width is inconsistent with stage/scene size
     @tailrec
     def addNextSquare(existingSquares: List[ObjectLocation], boundary: Double): List[ObjectLocation] =
       if (boundary == sceneXBoundary + (2 * objectWidth)) existingSquares

@@ -33,3 +33,5 @@ ___
   A new random shape will then be generated.
 - Press the `DOWN` arrow key to immediately descend the shape till collision.
 - The game will end when the structure extends above the red threshold line.
+- If a full line of existing blocks exists, that line of blocks will be removed.
+  This gives you more breathing room below the threshold and so is the main priority of gameplay.

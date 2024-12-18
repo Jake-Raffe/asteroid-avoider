@@ -5,14 +5,16 @@ import common.{GameAtStart, GamePaused, ObjectLocation}
 
 object ConfigGameConstants {
 
-  val sceneXBoundary: Double = 550
+  val sceneXBoundary: Double = 300
   val sceneYBoundary: Double = 600
+  val stageXBoundary: Double = sceneXBoundary
+  val stageYBoundary: Double = sceneYBoundary + 4 * objectWidth
 
   // Delay in milliseconds
   val scrollSpeed: Long = 300
 
   val initialPosition: ObjectLocation = ObjectLocation(sceneXBoundary / 2, 0)
-  val initialSquare: Shape            = Square(initialPosition)
+  val initialSquare: Shape            = Square(initialPosition, Neutral)
   val initialState: State             = State(initialSquare, ExistingBlocks(LowerBoundary.squares), GameAtStart)
 
   val frameScrollMap: Map[Int, Long] =

@@ -27,6 +27,7 @@ ___
 #### Tetris:
 
 - Falling shapes can be moved with the `LEFT` and `RIGHT` arrow keys.
+- Rotate the shape clockwise and anticlockwise using the `<` and `>` keys.
 - When a shape collides with the base or with the existing structure,
   the falling shape is added to the existing structure.
   A new random shape will then be generated.

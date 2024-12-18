@@ -42,6 +42,16 @@ case class State(currentShape: Shape, existingBlocks: ExistingBlocks, gameState:
         State(newPosition, existingBlocks, gameState)
     } else State(currentShape, existingBlocks, gameState)
 
+  def rotateShape(rotation: RotationDirection): State = // TODO this and moveShape are complicated but similar. Simplify and combine?
+    if (gameState == GameInProgress) {
+      val newPosition            = currentShape.rotate(rotation)
+      val collision              = objectCollision(newPosition)
+      val newPositionOutOfBounds = newPosition.leftBoundary < 0 || newPosition.rightBoundary > sceneXBoundary
+      val shape                  = if (newPositionOutOfBounds) currentShape else if (collision) createNewShape(currentShape) else newPosition
+      val newExistingBlocks      = if (collision) existingBlocks.addShape(currentShape) else existingBlocks
+      State(shape, newExistingBlocks, gameState)
+    } else State(currentShape, existingBlocks, gameState)
+
   def lowerShapeOnce(): State =
     if (objectCollision(currentShape.moveDown())) State(createNewShape(currentShape), existingBlocks.addShape(currentShape), gameState)
     else State(currentShape.moveDown(), existingBlocks, gameState)
@@ -65,7 +75,7 @@ case class State(currentShape: Shape, existingBlocks: ExistingBlocks, gameState:
     var newShapeType      = previousShapeType
     while (newShapeType == previousShapeType)
       newShapeType = random.nextInt(maxShapeTypes) + 1
-    newShapeMap(newShapeType)(initialPosition)
+    newShapeMap(newShapeType)(initialPosition, Neutral)
   }
 
   def displayText(): VBox =

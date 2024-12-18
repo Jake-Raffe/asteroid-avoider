@@ -33,8 +33,8 @@ object Tetris extends JFXApp3 {
 
     stage = new JFXApp3.PrimaryStage {
       title = "Tetris Rip-Off"
-      width = sceneXBoundary
-      height = sceneYBoundary + 4 * objectWidth
+      width = stageXBoundary
+      height = stageYBoundary
       scene = new Scene(sceneXBoundary, sceneYBoundary) {
         fill = Black
         content = state.value.generateAllObjects ++ List(state.value.displayText(), State.thresholdLine)
@@ -79,6 +79,12 @@ object Tetris extends JFXApp3 {
       case KeyCode.RIGHT =>
         println(">>> Right >>>")
         state.update(state.value.moveShape(Right))
+      case KeyCode.PERIOD =>
+        println(">>> ClockWise >>>")
+        state.update(state.value.rotateShape(ClockwiseRotate))
+      case KeyCode.COMMA =>
+        println("<<< AntiClockwise <<<")
+        state.update(state.value.rotateShape(AntiClockwiseRotate))
       case KeyCode.DOWN =>
         println("""\\\ Down ///""")
         state.update(state.value.dropShape())

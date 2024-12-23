@@ -81,10 +81,10 @@ object Tetris extends JFXApp3 {
       case KeyCode.RIGHT =>
         println(">>> Right >>>")
         state.update(state.value.moveShape(Right))
-      case KeyCode.PERIOD =>
+      case KeyCode.W =>
         println(">>> ClockWise >>>")
         state.update(state.value.rotateShape(ClockwiseRotate))
-      case KeyCode.COMMA =>
+      case KeyCode.Q =>
         println("<<< AntiClockwise <<<")
         state.update(state.value.rotateShape(AntiClockwiseRotate))
       case KeyCode.DOWN =>

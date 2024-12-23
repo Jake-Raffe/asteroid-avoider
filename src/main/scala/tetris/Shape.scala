@@ -10,9 +10,9 @@ import tetris.State.square
 import scala.annotation.tailrec
 
 trait Shape {
-  val shapeType: Int
   val maxShapeTypes: Int = 8
-  def centralPoint: ObjectLocation // TODO can some of these be vals without crashing?
+  val shapeType: Int
+  def centralPoint: ObjectLocation
   def orientation: Orientation
   def lowerBoundary: ObjectLocation
   def leftBoundary: Double
@@ -292,9 +292,8 @@ case class ExistingBlocks(squares: List[ObjectLocation]) {
   def addShape(newShape: Shape): ExistingBlocks = ExistingBlocks(squares ++ newShape.buildShape).removeRowIfFull()
 
   def removeRowIfFull(): ExistingBlocks = {
-    val sceneWidthThreshold    = stageXBoundary
-    val blocksNeededForFullRow = sceneWidthThreshold / objectWidth // TODO make this correct
-    val blocksListInAscendingOrder = squares.sortBy(-_.yAxis) // TODO is the floor boundary included in all blocks? If so filter them out
+    val blocksNeededForFullRow     = stageXBoundary / objectWidth
+    val blocksListInAscendingOrder = squares.sortBy(-_.yAxis)
 
     @tailrec
     def checkIfNextRowIsFull(remainingBlocksToCheck: List[ObjectLocation], checkedBlocks: List[ObjectLocation]): List[ObjectLocation] =
@@ -320,7 +319,7 @@ case class ExistingBlocks(squares: List[ObjectLocation]) {
 
 object LowerBoundary {
 
-  def createBoundary(): List[ObjectLocation] = { // TODO boundary width is inconsistent with stage/scene size
+  def createBoundary(): List[ObjectLocation] = {
     @tailrec
     def addNextSquare(existingSquares: List[ObjectLocation], boundary: Double): List[ObjectLocation] =
       if (boundary == stageXBoundary) existingSquares

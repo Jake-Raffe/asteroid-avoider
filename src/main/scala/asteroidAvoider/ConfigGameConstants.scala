@@ -1,12 +1,16 @@
 package asteroidAvoider
 
 import common.ConfigGameConstants.objectWidth
-import common.ObjectLocation
+import common.{GameAtStart, ObjectLocation}
 
 object ConfigGameConstants {
 
+  // Scene: this is the game field that the game actually exists in
   val sceneXBoundary: Double = 600
   val sceneYBoundary: Double = 600
+  // Stage/Window: this is the window that we see, W/H can be set and edited
+  val stageXBoundary: Double = sceneXBoundary + objectWidth
+  val stageYBoundary: Double = sceneYBoundary + 3 * objectWidth
 
   private val shipStartXPosition: Double = sceneXBoundary / 2
   val shipYPosition: Double              = sceneYBoundary - (2 * objectWidth)
@@ -14,9 +18,7 @@ object ConfigGameConstants {
 
   val scrollSpeed: Long = 800
 
-  val initialState: State = State(shipStartPosition, List.empty[ObjectLocation], gameInMotion = false, collision = false)
-  val initialStateWithAsteroids: State =
-    State(shipStartPosition, List(ObjectLocation(0, 0), ObjectLocation(110, 110), ObjectLocation(200, 70)), gameInMotion = false, collision = false)
+  val initialState: State = State(shipStartPosition, List.empty[ObjectLocation], GameAtStart)
 
   val frameScrollMap: Map[Int, Long] =
     Map(

@@ -1,7 +1,7 @@
 package tetris
 
 import common.*
-import common.ConfigGameConstants.objectWidth
+import common.ConfigGameConstants.{gameOverText, objectWidth, pausedText, startGameText}
 import scalafx.beans.property.BooleanProperty
 import scalafx.geometry.Pos
 import scalafx.scene.layout.VBox
@@ -67,7 +67,7 @@ case class State(currentShape: Shape, existingBlocks: ExistingBlocks, gameState:
     State(createNewShape(currentShape), dropShapeTillBottom(currentShape, 0), gameState)
   }
 
-  def objectCollision(shape: Shape): Boolean = shape.buildShape.exists(existingBlocks.existingPlusFloor.contains(_))
+  private def objectCollision(shape: Shape): Boolean = shape.buildShape.exists(existingBlocks.existingPlusFloor.contains(_))
 
   val random = new Random()
   private def createNewShape(previousShape: Shape): Shape = {
@@ -78,22 +78,20 @@ case class State(currentShape: Shape, existingBlocks: ExistingBlocks, gameState:
     newShapeMap(newShapeType)(initialPosition, Neutral)
   }
 
-  def displayText(): VBox =
+  def displayText(): VBox = {
+    val text = gameState match {
+      case GameAtStart => startGameText
+      case Collision   => gameOverText
+      case _           => pausedText
+    }
     new VBox {
-      layoutX = gameState match {
-        case GameAtStart => stageXBoundary / 4
-        case Collision   => stageXBoundary / 5
-        case _           => stageXBoundary / 3
-      }
+      layoutX = objectWidth + (sceneXBoundary - text.boundsInLocal().getWidth) / 2
       layoutY = sceneYBoundary / 3
       alignment = Pos.Center
-      children = gameState match {
-        case GameAtStart => startGameText
-        case Collision   => gameOverText
-        case _           => pausedText
-      }
+      children = text
       visible = gameState != GameInProgress
     }
+  }
 }
 
 object State {
@@ -109,26 +107,10 @@ object State {
   val thresholdLine: Line = new Line {
     startX = 0
     startY = 140
-    endX = sceneXBoundary + 2 * objectWidth
+    endX = stageXBoundary
     endY = 140
     stroke = Color.Red
     strokeWidth = 2
     strokeDashArray.addAll(10.0, 5.0) // Pattern: 10px dash, 5px gap
-  }
-// TODO make the text fit the new width boundary
-  val startGameText: Text = new Text("Press SPACE to Start!") {
-    fill = Black
-    stroke = White
-    font = Font("Ariel", 30)
-  }
-  val pausedText: Text = new Text("Game Paused") {
-    fill = Black
-    stroke = White
-    font = Font("Ariel", 30)
-  }
-  val gameOverText: Text = new Text("GAME OVER! Press R to restart") {
-    fill = Black
-    stroke = White
-    font = Font("Ariel", 30)
   }
 }

@@ -30,33 +30,28 @@ object AsteroidAvoider extends JFXApp3 {
       // Increase scroll rate over time
       if (frameScrollMap.contains(frame.value)) scrollAccelerator.update(frameScrollMap(frame.value))
       println(s"--- frame: ${frame.value} --- acceleration: ${scrollAccelerator.value}")
-      if (state.value.gameInMotion) state.update(state.value.verticalScroll())
+      if (state.value.gameState == GameInProgress) state.update(state.value.verticalScroll())
     }
 
     stage = new JFXApp3.PrimaryStage {
       title = "Asteroid Avoider"
-      width = sceneXBoundary
-      height = sceneYBoundary
-      scene = new Scene {
+      width = stageXBoundary
+      height = stageYBoundary
+      scene = new Scene(sceneXBoundary, sceneYBoundary) {
         fill = Black
-        content = state.value.generateAllObjects
+        content = state.value.generateAllObjects.appended(state.value.displayText())
         onKeyPressed = handleKeyPress(_)
         // 4. when state is updated, regenerate game field
         state.onChange {
-          if (state.value.collision) frameIncrementor.update(0)
+          state.value.gameState match {
+            case GameInProgress                       => frameIncrementor.update(1)
+            case GameAtStart | GamePaused | Collision => frameIncrementor.update(0)
+          }
           Platform.runLater {
-            content = state.value.generateAllObjects
+            content = state.value.generateAllObjects.appended(state.value.displayText())
           }
         }
       }
-    }
-
-    // Scene: this is the game field that the game actually exists in
-    // Stage/Window: this is the window that we see, W/H can be set and edited
-    // Scene is always slightly larger than the stage on creation for some reason. Has to be edited in post:
-    stage.setOnShown { _ =>
-      stage.width = stage.scene().getWidth + objectWidth
-      stage.height = stage.scene().getHeight + (3 * objectWidth)
     }
 
     // 1. start game loop
@@ -79,11 +74,11 @@ object AsteroidAvoider extends JFXApp3 {
     }
 
     def handleKeyPress(key: KeyEvent): Unit = key.getCode match {
-      case KeyCode.SPACE if state.value.gameInMotion =>
+      case KeyCode.SPACE if state.value.gameState == GameInProgress =>
         println(">>> Game PAUSED <<<")
         frameIncrementor.update(0)
         state.update(state.value.pauseGame())
-      case KeyCode.SPACE =>
+      case KeyCode.SPACE if state.value.gameState != Collision =>
         println("<<< Game STARTED >>>")
         frameIncrementor.update(1)
         state.update(state.value.startGame())

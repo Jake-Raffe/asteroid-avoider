@@ -7,7 +7,7 @@ object ConfigGameConstants {
 
   val sceneXBoundary: Double = 300
   val sceneYBoundary: Double = 600
-  val stageXBoundary: Double = sceneXBoundary
+  val stageXBoundary: Double = sceneXBoundary + 2 * objectWidth
   val stageYBoundary: Double = sceneYBoundary + 4 * objectWidth
 
   // Delay in milliseconds
@@ -15,25 +15,7 @@ object ConfigGameConstants {
 
   val initialPosition: ObjectLocation = ObjectLocation(sceneXBoundary / 2, 0)
   val initialSquare: Shape            = Square(initialPosition, Neutral)
-  val initialState: State             = State(initialSquare, ExistingBlocks(LowerBoundary.squares), GameAtStart)
+  val initialState: State             = State(initialSquare, ExistingBlocks(List.empty), GameAtStart)
 
-  val frameScrollMap: Map[Int, Long] =
-    Map(
-      5   -> 100,
-      10  -> 200,
-      15  -> 250,
-      20  -> 300,
-      25  -> 350,
-      30  -> 375,
-      40  -> 400,
-      50  -> 425,
-      60  -> 450,
-      80  -> 460,
-      100 -> 470,
-      120 -> 480,
-      140 -> 490,
-      160 -> 500,
-      200 -> 510,
-      250 -> 525,
-      300 -> 550)
+  val frameScrollMap: Map[Int, Long] = Map(500 -> 25, 1000 -> 50, 1500 -> 75, 2000 -> 100)
 }

@@ -26,14 +26,14 @@ case class State(currentShape: Shape, existingBlocks: ExistingBlocks, gameState:
     State(currentShape, existingBlocks, updatedGameState)
   }
 
-  def generateAllObjects: List[Rectangle] = existingBlocks.toDisplayObjects ++ currentShape.toDisplayObjects
+  def generateAllObjects: List[Rectangle] = LowerBoundary.toDisplayObjects ++ existingBlocks.toDisplayObjects ++ currentShape.toDisplayObjects
 
   def moveShape(direction: MovementDirection): State =
     if (gameState == GameInProgress) {
       val newPosition = direction match {
         case Left if currentShape.leftBoundary == 0                => currentShape
         case Left                                                  => currentShape.moveLeft()
-        case Right if currentShape.rightBoundary == sceneXBoundary => currentShape
+        case Right if currentShape.rightBoundary == stageXBoundary => currentShape
         case Right                                                 => currentShape.moveRight()
       }
       if (objectCollision(newPosition))
@@ -46,7 +46,7 @@ case class State(currentShape: Shape, existingBlocks: ExistingBlocks, gameState:
     if (gameState == GameInProgress) {
       val newPosition            = currentShape.rotate(rotation)
       val collision              = objectCollision(newPosition)
-      val newPositionOutOfBounds = newPosition.leftBoundary < 0 || newPosition.rightBoundary > sceneXBoundary
+      val newPositionOutOfBounds = newPosition.leftBoundary < 0 || newPosition.rightBoundary > stageXBoundary
       val shape                  = if (newPositionOutOfBounds) currentShape else if (collision) createNewShape(currentShape) else newPosition
       val newExistingBlocks      = if (collision) existingBlocks.addShape(currentShape) else existingBlocks
       State(shape, newExistingBlocks, gameState)
@@ -67,7 +67,7 @@ case class State(currentShape: Shape, existingBlocks: ExistingBlocks, gameState:
     State(createNewShape(currentShape), dropShapeTillBottom(currentShape, 0), gameState)
   }
 
-  def objectCollision(shape: Shape): Boolean = shape.buildShape.exists(existingBlocks.squares.contains(_))
+  def objectCollision(shape: Shape): Boolean = shape.buildShape.exists(existingBlocks.existingPlusFloor.contains(_))
 
   val random = new Random()
   private def createNewShape(previousShape: Shape): Shape = {
@@ -81,9 +81,9 @@ case class State(currentShape: Shape, existingBlocks: ExistingBlocks, gameState:
   def displayText(): VBox =
     new VBox {
       layoutX = gameState match {
-        case GameAtStart => sceneXBoundary / 4
-        case Collision   => sceneXBoundary / 5
-        case _           => sceneXBoundary / 3
+        case GameAtStart => stageXBoundary / 4
+        case Collision   => stageXBoundary / 5
+        case _           => stageXBoundary / 3
       }
       layoutY = sceneYBoundary / 3
       alignment = Pos.Center
@@ -115,7 +115,7 @@ object State {
     strokeWidth = 2
     strokeDashArray.addAll(10.0, 5.0) // Pattern: 10px dash, 5px gap
   }
-
+// TODO make the text fit the new width boundary
   val startGameText: Text = new Text("Press SPACE to Start!") {
     fill = Black
     stroke = White

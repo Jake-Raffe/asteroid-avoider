@@ -25,14 +25,16 @@ object Tetris extends JFXApp3 {
     val state: ObjectProperty[State]      = ObjectProperty(initialState)
     val frame: IntegerProperty            = IntegerProperty(0)
     val frameIncrementor: IntegerProperty = IntegerProperty(0)
+    val scrollAccelerator: LongProperty   = LongProperty(0)
 
     frame.onChange {
-      println(s"--- frame: ${frame.value}")
+      if (frameScrollMap.contains(frame.value)) scrollAccelerator.update(frameScrollMap(frame.value))
+      println(s"--- frame: ${frame.value} --- acceleration: ${scrollAccelerator.value}")
       if (state.value.gameState == GameInProgress) state.update(state.value.lowerShapeOnce())
     }
 
     stage = new JFXApp3.PrimaryStage {
-      title = "Tetris Rip-Off"
+      title = "Tetris"
       width = stageXBoundary
       height = stageYBoundary
       scene = new Scene(sceneXBoundary, sceneYBoundary) {

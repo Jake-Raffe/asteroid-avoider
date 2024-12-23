@@ -4,7 +4,7 @@ import common.*
 import common.ConfigGameConstants.objectWidth
 import scalafx.scene.paint.Color.{Green, Grey, Silver, White}
 import scalafx.scene.shape.Rectangle
-import tetris.ConfigGameConstants.{sceneXBoundary, sceneYBoundary}
+import tetris.ConfigGameConstants.{sceneXBoundary, sceneYBoundary, stageXBoundary}
 import tetris.State.square
 
 import scala.annotation.tailrec
@@ -286,50 +286,50 @@ case class TShape(centralPoint: ObjectLocation, orientation: Orientation) extend
 }
 
 case class ExistingBlocks(squares: List[ObjectLocation]) {
-  def addShape(newShape: Shape): ExistingBlocks = ExistingBlocks(removeRowIfFull(squares ++ newShape.buildShape))
 
-  def removeRowIfFull(allBlocks: List[ObjectLocation]): List[ObjectLocation] = {
-    val sceneWidthThreshold    = 200
+  val existingPlusFloor: List[ObjectLocation] = squares ++ LowerBoundary.createBoundary()
+
+  def addShape(newShape: Shape): ExistingBlocks = ExistingBlocks(squares ++ newShape.buildShape).removeRowIfFull()
+
+  def removeRowIfFull(): ExistingBlocks = {
+    val sceneWidthThreshold    = stageXBoundary
     val blocksNeededForFullRow = sceneWidthThreshold / objectWidth // TODO make this correct
-    println("==blocksNeededForFullRow: " + blocksNeededForFullRow)
-    val blocksListInAscendingOrder = allBlocks.sortBy(-_.yAxis) // TODO is the floor boundary included in all blocks? If so filter them out
-    // 2.2 method takes two params,
-    //    - the blocks left to check
-    //    - the blocks that remain
-    // 3 method output is blocks that remain when there are no more blocks left to check
-    // 2. create two lists, one with all blocks of the same height as head (the lowest block), one with all others
+    val blocksListInAscendingOrder = squares.sortBy(-_.yAxis) // TODO is the floor boundary included in all blocks? If so filter them out
 
     @tailrec
-    def checkIfNextRowIsFull(remainingBlocks: List[ObjectLocation], checkedBlocks: List[ObjectLocation]): List[ObjectLocation] =
-      remainingBlocks match {
+    def checkIfNextRowIsFull(remainingBlocksToCheck: List[ObjectLocation], checkedBlocks: List[ObjectLocation]): List[ObjectLocation] =
+      remainingBlocksToCheck match {
         case head :: tail =>
           val (blocksInRow, otherBlocks) = tail.partition(_.yAxis == head.yAxis) match {
             case (same, diff) => (head :: same, diff)
           }
-          val rowIsFull = blocksInRow.length == blocksNeededForFullRow // TODO if row is full and removed, all higher blocks must be moved down
-          println("==blocksInRow: " + blocksInRow.length)
-          val boxesToRemain = if (rowIsFull) checkedBlocks else blocksInRow ++ checkedBlocks
-          checkIfNextRowIsFull(otherBlocks, boxesToRemain)
+          val rowIsFull = blocksInRow.length >= blocksNeededForFullRow
+          if (rowIsFull) {
+            checkIfNextRowIsFull(remainingBlocksToCheck = otherBlocks.map(_.moveDown), checkedBlocks)
+          } else {
+            checkIfNextRowIsFull(remainingBlocksToCheck = otherBlocks, blocksInRow ++ checkedBlocks)
+          }
         case Nil => checkedBlocks
       }
 
-    checkIfNextRowIsFull(blocksListInAscendingOrder, List.empty[ObjectLocation])
+    ExistingBlocks(checkIfNextRowIsFull(blocksListInAscendingOrder, List.empty[ObjectLocation]))
   }
 
-  val toDisplayObjects: List[Rectangle] = squares.map(s => square(s, if (s.yAxis == sceneYBoundary) Grey else Silver))
+  val toDisplayObjects: List[Rectangle] = squares.map(square(_, Silver))
 }
 
 object LowerBoundary {
-  private def createBoundary(): List[ObjectLocation] = { // TODO boundary width is inconsistent with stage/scene size
+
+  def createBoundary(): List[ObjectLocation] = { // TODO boundary width is inconsistent with stage/scene size
     @tailrec
     def addNextSquare(existingSquares: List[ObjectLocation], boundary: Double): List[ObjectLocation] =
-      if (boundary == sceneXBoundary + (2 * objectWidth)) existingSquares
+      if (boundary == stageXBoundary) existingSquares
       else
         addNextSquare(existingSquares.appended(ObjectLocation(boundary, sceneYBoundary)), boundary + objectWidth)
     addNextSquare(List(ObjectLocation(0, sceneYBoundary)), 0 + objectWidth)
   }
 
-  val squares: List[ObjectLocation] = createBoundary()
+  val toDisplayObjects: List[Rectangle] = createBoundary().map(square(_, Grey))
 }
 
 trait Orientation {

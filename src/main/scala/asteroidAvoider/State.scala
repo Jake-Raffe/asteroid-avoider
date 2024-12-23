@@ -14,7 +14,7 @@ import scala.util.Random
 case class State(shipPosition: ObjectLocation, asteroids: List[ObjectLocation], gameInMotion: Boolean, collision: Boolean) {
   private val asteroidColour: Color = if (collision) Red else White
   private val shipColour: Color     = if (collision) White else Red
-// TODO add tests where relevant
+
   def startGame(): State = State(shipPosition, asteroids, gameInMotion = true, collision)
   def pauseGame(): State = State(shipPosition, asteroids, gameInMotion = false, collision)
 

@@ -19,6 +19,10 @@ import scala.util.Random
 
 object AsteroidAvoider extends JFXApp3 {
 
+  // TODO
+  // - Add score to the pause/end-game text
+  // - Use different shape or image for the ship
+
   override def start(): Unit = {
     val state: ObjectProperty[State]      = ObjectProperty(initialState)
     val frame: IntegerProperty            = IntegerProperty(0)

@@ -1,6 +1,6 @@
-package tetris
+package boxJumper
 
-import asteroidAvoider.ConfigGameConstants.sceneXBoundary
+import boxJumper.ConfigGameConstants.*
 import common.*
 import common.ConfigGameConstants.objectWidth
 import javafx.scene.input.{KeyCode, KeyEvent}
@@ -13,18 +13,17 @@ import scalafx.scene.layout.{StackPane, VBox}
 import scalafx.scene.paint.Color
 import scalafx.scene.paint.Color.*
 import scalafx.scene.shape.{Rectangle, Sphere}
-import tetris.ConfigGameConstants.*
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.Random
 
-object Tetris extends JFXApp3 {
+object BoxJumper extends JFXApp3 {
 
   // TODO
-  // - Add score to the pause/end-game text (frame /100 ?)
-  // - Increase speed over time
-  // - Add option to see where shape would land if collides at current position and orientation?
+  // - Add random elements and variance to the obstacles
+  // - Use different shapes
+  // - Add a spinning motion to the jump animation
 
   override def start(): Unit = {
     val state: ObjectProperty[State]      = ObjectProperty(initialState)
@@ -34,26 +33,24 @@ object Tetris extends JFXApp3 {
 
     frame.onChange {
       if (frameScrollMap.contains(frame.value)) scrollAccelerator.update(frameScrollMap(frame.value))
-      println(s"--- frame: ${frame.value} --- acceleration: ${scrollAccelerator.value}")
-      if (state.value.gameState == GameInProgress) state.update(state.value.lowerShapeOnce())
+      if (state.value.gameState == GameInProgress) state.update(state.value.horizontalScroll())
     }
 
     stage = new JFXApp3.PrimaryStage {
-      title = "Tetris"
+      title = "Box Jumper"
       width = stageXBoundary
       height = stageYBoundary
       scene = new Scene(sceneXBoundary, sceneYBoundary) {
         fill = Black
-        content = state.value.generateAllObjects ++ List(state.value.displayText(), State.thresholdLine)
+        content = state.value.generateAllObjects.appended(state.value.displayText(frame.value))
         onKeyPressed = handleKeyPress(_)
         state.onChange {
-          state.update(state.value.checkIfOverThreshold())
           state.value.gameState match {
             case GameInProgress                       => frameIncrementor.update(1)
             case GameAtStart | GamePaused | Collision => frameIncrementor.update(0)
           }
           Platform.runLater {
-            content = state.value.generateAllObjects ++ List(state.value.displayText(), State.thresholdLine)
+            content = state.value.generateAllObjects.appended(state.value.displayText(frame.value))
           }
         }
       }
@@ -64,7 +61,7 @@ object Tetris extends JFXApp3 {
     def gameLoop(): Unit =
       Future {
         frame.update(frame.value + frameIncrementor.value)
-        Thread.sleep(scrollSpeed)
+        Thread.sleep(runSpeed - scrollAccelerator.value)
       }.flatMap(_ => Future(gameLoop()))
 
     def resetGame(): Unit = {
@@ -80,21 +77,9 @@ object Tetris extends JFXApp3 {
       case KeyCode.SPACE =>
         println("<<< Game STARTED >>>")
         state.update(state.value.startGame())
-      case KeyCode.LEFT =>
-        println("<<< Left <<<")
-        state.update(state.value.moveShape(Left))
-      case KeyCode.RIGHT =>
-        println(">>> Right >>>")
-        state.update(state.value.moveShape(Right))
-      case KeyCode.W =>
-        println(">>> ClockWise >>>")
-        state.update(state.value.rotateShape(ClockwiseRotate))
-      case KeyCode.Q =>
-        println("<<< AntiClockwise <<<")
-        state.update(state.value.rotateShape(AntiClockwiseRotate))
-      case KeyCode.DOWN =>
-        println("""\\\ Down ///""")
-        state.update(state.value.dropShape())
+      case KeyCode.UP if state.value.jumpFrame == 0 =>
+        println("""/// JUMP \\\""")
+        state.update(state.value.jump())
       case KeyCode.R =>
         println("*** Game RESET ***")
         resetGame()

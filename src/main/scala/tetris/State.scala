@@ -6,7 +6,7 @@ import scalafx.beans.property.BooleanProperty
 import scalafx.geometry.Pos
 import scalafx.scene.layout.VBox
 import scalafx.scene.paint.Color
-import scalafx.scene.paint.Color.{Black, Blue, Green, Grey, Red, White}
+import scalafx.scene.paint.Color.{Black, Grey, White}
 import scalafx.scene.shape.{Line, Rectangle}
 import scalafx.scene.text.{Font, Text}
 import tetris.ConfigGameConstants.*

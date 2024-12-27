@@ -10,13 +10,8 @@
     <list default="true" id="8a9ce60d-2faa-4efa-8c96-ac9ec500089c" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/asteroidAvoider/AsteroidAvoider.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/asteroidAvoider/AsteroidAvoider.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/asteroidAvoider/ConfigGameConstants.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/asteroidAvoider/ConfigGameConstants.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/asteroidAvoider/State.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/asteroidAvoider/State.scala" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/scala/common/ConfigGameConstants.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/common/ConfigGameConstants.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/tetris/Shape.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/tetris/Shape.scala" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/scala/tetris/State.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/tetris/State.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/tetris/Tetris.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/tetris/Tetris.scala" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,6 +49,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Application.AsteroidAvoider.executor": "Run",
+    "Application.BoxJumper.executor": "Run",
     "Application.Game.executor": "Run",
     "Application.Main.executor": "Run",
     "Application.ScalaFxAttempt.executor": "Run",
@@ -64,9 +60,9 @@
     "ScalaTest.TetrisSpec.Shape .removeRowIfFull should return an empty list.executor": "Run",
     "ScalaTest.TetrisSpec.executor": "Run",
     "ScalaTest.TetrisSpec.fullRow should create 14 objects.executor": "Run",
-    "git-widget-placeholder": "tetris",
+    "git-widget-placeholder": "box-jumper",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/Users/jacob.raffe/JR-dev/asteroid-avoider/src/main/scala/tetris",
+    "last_opened_file_path": "/Users/jacob.raffe/JR-dev/asteroid-avoider/src/main/scala/boxJumper",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -82,11 +78,11 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/main/scala/boxJumper" />
       <recent name="$PROJECT_DIR$/src/main/scala/tetris" />
       <recent name="$PROJECT_DIR$/target/scala-3.2.2" />
       <recent name="$PROJECT_DIR$/target/scala-3.2.2/asteroid-avoider-fastopt" />
       <recent name="$PROJECT_DIR$" />
-      <recent name="$PROJECT_DIR$/src" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/target/scala-3.2.2/asteroid-avoider-fastopt" />
@@ -96,17 +92,31 @@
       <recent name="" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="boxJumper" />
       <recent name="" />
       <recent name="tetris" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.Tetris">
+  <component name="RunManager" selected="Application.BoxJumper">
     <configuration name="AsteroidAvoider" type="Application" factoryName="Application" temporary="true">
       <option name="MAIN_CLASS_NAME" value="asteroidAvoider.AsteroidAvoider" />
       <module name="asteroid-avoider" />
       <extension name="coverage">
         <pattern>
           <option name="PATTERN" value="asteroidAvoider.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="BoxJumper" type="Application" factoryName="Application" temporary="true">
+      <option name="MAIN_CLASS_NAME" value="boxJumper.BoxJumper" />
+      <module name="asteroid-avoider" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="boxJumper.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -154,27 +164,13 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="TetrisSpec.fullRow should create 14 objects" type="ScalaTestRunConfiguration" factoryName="ScalaTest" temporary="true" nameIsGenerated="true" show_console_on_std_err="false" show_console_on_std_out="false">
-      <module name="asteroid-avoider" />
-      <option name="allowRunningInParallel" value="false" />
-      <option name="projectPathOnTarget" />
-      <option name="selectedOptions">
-        <list />
-      </option>
-      <option name="testKind" value="Test name" />
-      <option name="testClassPath" value="TetrisSpec" />
-      <option name="testName" value="fullRow should create 14 objects" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.BoxJumper" />
         <item itemvalue="Application.Tetris" />
         <item itemvalue="Application.AsteroidAvoider" />
         <item itemvalue="ScalaTest.TetrisSpec" />
         <item itemvalue="ScalaTest.TetrisSpec.Shape .removeRowIfFull should return an empty list" />
-        <item itemvalue="ScalaTest.TetrisSpec.fullRow should create 14 objects" />
       </list>
     </recent_temporary>
   </component>
@@ -197,7 +193,7 @@
       <option name="presentableId" value="Default" />
       <updated>1732883666384</updated>
       <workItem from="1732883668002" duration="2942000" />
-      <workItem from="1734343094446" duration="40347000" />
+      <workItem from="1734343094446" duration="61498000" />
     </task>
     <servers />
   </component>

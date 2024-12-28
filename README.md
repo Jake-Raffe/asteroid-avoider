@@ -19,7 +19,7 @@ ___
 - Press `R` to reset the game.
 - Game speed will increase over time.
 
-#### Asteroid Avoider:
+#### Asteroid Avoider: _Vertical scrolling game_
 
 - Move the spaceship with the `LEFT` and `RIGHT` arrow keys to avoid the asteroids.
 - Collision with an asteroid will invert the colours and end the game.
@@ -35,3 +35,16 @@ ___
 - The game will end when the structure extends above the red threshold line.
 - If a full line of existing blocks exists, that line of blocks will be removed.
   This gives you more breathing room below the threshold and so is the main priority of gameplay.
+
+#### Box Jumper: _Horizontal scrolling game_
+
+- Obstacles will come from the right side of the screen.
+- Press the `UP` button to jump over them.
+
+---
+
+#### Future Games:
+- Minesweeper: mouse-based since all previous have been keyboard-based.
+- Shape cutter: you must cut across a shape, filling in the parts you cut till 90% of the shape is filled in.
+  If you or your line is hit by the randomly moving hazards you lose a life.
+- Tron: multiplayer game using the same line collision logic as shape cutter.

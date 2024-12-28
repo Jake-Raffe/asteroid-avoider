@@ -23,4 +23,17 @@ object ConfigGameConstants {
     stroke = White
     font = Font("Ariel", 30)
   }
+
+  def createTextWithScore(gameState: GameState, score: Int) = {
+    val content = gameState match {
+      case GameAtStart => "Press SPACE to Start!"
+      case Collision   => s"   GAME OVER!\n        Score: $score\nPress R to restart"
+      case _           => s"Game Paused\n      Score: $score"
+    }
+    new Text(content) {
+      fill = Black
+      stroke = White
+      font = Font("Ariel", 30)
+    }
+  }
 }

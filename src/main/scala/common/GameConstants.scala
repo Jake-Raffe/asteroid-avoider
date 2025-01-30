@@ -1,9 +1,10 @@
 package common
 
+import common.{Collision, GameAtStart, GameState}
 import scalafx.scene.paint.Color.{Black, White}
 import scalafx.scene.text.{Font, Text}
 
-object ConfigGameConstants {
+trait GameConstants {
 
   val objectWidth: Double    = 25
   val movementAmount: Double = objectWidth
@@ -36,4 +37,5 @@ object ConfigGameConstants {
       font = Font("Ariel", 30)
     }
   }
+
 }

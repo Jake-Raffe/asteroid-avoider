@@ -1,11 +1,10 @@
 package tetris
 
 import common.*
-import common.ConfigGameConstants.objectWidth
 import scalafx.scene.paint.Color.{Green, Grey, Silver, White}
 import scalafx.scene.shape.Rectangle
-import tetris.ConfigGameConstants.{sceneXBoundary, sceneYBoundary, stageXBoundary}
 import tetris.State.square
+import tetris.Tetris.*
 
 import scala.annotation.tailrec
 

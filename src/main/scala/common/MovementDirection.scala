@@ -1,6 +1,6 @@
 package common
 
-import common.ConfigGameConstants.movementAmount
+import asteroidAvoider.AsteroidAvoider.movementAmount
 import tetris.Orientation
 
 trait MovementDirection {

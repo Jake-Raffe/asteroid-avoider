@@ -1,9 +1,8 @@
 package asteroidAvoider
 
-import asteroidAvoider.ConfigGameConstants.*
+import asteroidAvoider.AsteroidAvoider.*
 import asteroidAvoider.State.{shipHasCrashed, square}
 import common.*
-import common.ConfigGameConstants.{gameOverText, objectWidth, pausedText, startGameText}
 import scalafx.beans.property.BooleanProperty
 import scalafx.geometry.Pos
 import scalafx.scene.layout.VBox
@@ -63,12 +62,8 @@ case class State(shipPosition: ObjectLocation, asteroids: List[ObjectLocation], 
     ObjectLocation(newXAxis, 0)
   }
 
-  def displayText(): VBox = {
-    val text = gameState match {
-      case GameAtStart => startGameText
-      case Collision   => gameOverText
-      case _           => pausedText
-    }
+  def displayText(score: Int): VBox = {
+    val text = createTextWithScore(gameState, score / 10)
     new VBox {
       layoutX = (stageXBoundary - text.boundsInLocal().getWidth) / 2
       layoutY = sceneYBoundary / 3

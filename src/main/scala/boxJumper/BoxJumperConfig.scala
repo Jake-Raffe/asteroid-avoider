@@ -1,9 +1,8 @@
 package boxJumper
 
-import common.ConfigGameConstants.objectWidth
-import common.{GameAtStart, GamePaused, ObjectLocation}
+import common.{GameAtStart, GameConstants, GamePaused, ObjectLocation}
 
-object ConfigGameConstants {
+trait BoxJumperConfig extends GameConstants {
 
   val sceneXBoundary: Double = 600
   val sceneYBoundary: Double = 300

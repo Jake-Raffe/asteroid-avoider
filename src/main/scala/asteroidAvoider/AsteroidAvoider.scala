@@ -1,9 +1,8 @@
 package asteroidAvoider
 
 import asteroidAvoider.AsteroidAvoider.stage
-import asteroidAvoider.ConfigGameConstants.*
+import asteroidAvoider.AsteroidAvoiderConfig
 import common.*
-import common.ConfigGameConstants.objectWidth
 import javafx.scene.input.{KeyCode, KeyEvent}
 import scalafx.application.{JFXApp3, Platform}
 import scalafx.beans.property.*
@@ -17,7 +16,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.Random
 
-object AsteroidAvoider extends JFXApp3 {
+object AsteroidAvoider extends JFXApp3 with AsteroidAvoiderConfig {
 
   // TODO
   // - Add score to the pause/end-game text
@@ -29,9 +28,7 @@ object AsteroidAvoider extends JFXApp3 {
     val frameIncrementor: IntegerProperty = IntegerProperty(0)
     val scrollAccelerator: LongProperty   = LongProperty(0)
 
-    // 3. as frame increases, vertical scroll will update the state
     frame.onChange {
-      // Increase scroll rate over time
       if (frameScrollMap.contains(frame.value)) scrollAccelerator.update(frameScrollMap(frame.value))
       println(s"--- frame: ${frame.value} --- acceleration: ${scrollAccelerator.value}")
       if (state.value.gameState == GameInProgress) state.update(state.value.verticalScroll())
@@ -43,27 +40,22 @@ object AsteroidAvoider extends JFXApp3 {
       height = stageYBoundary
       scene = new Scene(sceneXBoundary, sceneYBoundary) {
         fill = Black
-        content = state.value.generateAllObjects.appended(state.value.displayText())
+        content = state.value.generateAllObjects.appended(state.value.displayText(frame.value))
         onKeyPressed = handleKeyPress(_)
-        // 4. when state is updated, regenerate game field
         state.onChange {
           state.value.gameState match {
             case GameInProgress                       => frameIncrementor.update(1)
             case GameAtStart | GamePaused | Collision => frameIncrementor.update(0)
           }
           Platform.runLater {
-            content = state.value.generateAllObjects.appended(state.value.displayText())
+            content = state.value.generateAllObjects.appended(state.value.displayText(frame.value))
           }
         }
       }
     }
 
-    // 1. start game loop
-    // GameLoop can only ever be called once or multiple threads will run
-    // To pause / play the game, the incrementer must be edited to that the thread is continuous but the frame is not always changing
     gameLoop()
 
-    // 2. game loop thread will increment frame every 1s, triggering the .onChange method
     def gameLoop(): Unit =
       Future {
         frame.update(frame.value + frameIncrementor.value)

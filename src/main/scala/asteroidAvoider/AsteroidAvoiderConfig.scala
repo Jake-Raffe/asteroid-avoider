@@ -1,9 +1,8 @@
 package asteroidAvoider
 
-import common.ConfigGameConstants.objectWidth
-import common.{GameAtStart, ObjectLocation}
+import common.{GameAtStart, GameConstants, ObjectLocation}
 
-object ConfigGameConstants {
+trait AsteroidAvoiderConfig extends GameConstants {
 
   // Scene: this is the game field that the game actually exists in
   val sceneXBoundary: Double = 600

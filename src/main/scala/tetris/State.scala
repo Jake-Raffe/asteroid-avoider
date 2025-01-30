@@ -1,7 +1,6 @@
 package tetris
 
 import common.*
-import common.ConfigGameConstants.{gameOverText, objectWidth, pausedText, startGameText}
 import scalafx.beans.property.BooleanProperty
 import scalafx.geometry.Pos
 import scalafx.scene.layout.VBox
@@ -9,9 +8,9 @@ import scalafx.scene.paint.Color
 import scalafx.scene.paint.Color.{Black, Grey, White}
 import scalafx.scene.shape.{Line, Rectangle}
 import scalafx.scene.text.{Font, Text}
-import tetris.ConfigGameConstants.*
-import tetris.ConfigGameConstants.initialSquare.{maxShapeTypes, newShapeMap}
 import tetris.State.*
+import tetris.Tetris.*
+import tetris.Tetris.initialSquare.{maxShapeTypes, newShapeMap}
 
 import scala.annotation.tailrec
 import scala.util.Random
@@ -78,12 +77,8 @@ case class State(currentShape: Shape, existingBlocks: ExistingBlocks, gameState:
     newShapeMap(newShapeType)(initialPosition, Neutral)
   }
 
-  def displayText(): VBox = {
-    val text = gameState match {
-      case GameAtStart => startGameText
-      case Collision   => gameOverText
-      case _           => pausedText
-    }
+  def displayText(score: Int): VBox = {
+    val text = createTextWithScore(gameState, score / 5)
     new VBox {
       layoutX = objectWidth + (sceneXBoundary - text.boundsInLocal().getWidth) / 2
       layoutY = sceneYBoundary / 3

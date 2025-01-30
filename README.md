@@ -19,11 +19,6 @@ ___
 - Press `R` to reset the game.
 - Game speed will increase over time.
 
-#### Asteroid Avoider: _Vertical scrolling game_
-
-- Move the spaceship with the `LEFT` and `RIGHT` arrow keys to avoid the asteroids.
-- Collision with an asteroid will invert the colours and end the game.
-
 #### Tetris:
 
 - Falling shapes can be moved with the `LEFT` and `RIGHT` arrow keys.
@@ -36,7 +31,13 @@ ___
 - If a full line of existing blocks exists, that line of blocks will be removed.
   This gives you more breathing room below the threshold and so is the main priority of gameplay.
 
+#### Asteroid Avoider: _Vertical scrolling game_
+
+- Move the spaceship with the `LEFT` and `RIGHT` arrow keys to avoid the asteroids.
+- Collision with an asteroid will invert the colours and end the game.
+
 #### Box Jumper: _Horizontal scrolling game_
+(pretty minimal for now, may use it as a base to expand upon later)
 
 - Obstacles will come from the right side of the screen.
 - Press the `UP` button to jump over them.

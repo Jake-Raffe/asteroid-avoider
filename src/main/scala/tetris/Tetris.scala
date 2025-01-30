@@ -1,8 +1,6 @@
 package tetris
 
-import asteroidAvoider.ConfigGameConstants.sceneXBoundary
 import common.*
-import common.ConfigGameConstants.objectWidth
 import javafx.scene.input.{KeyCode, KeyEvent}
 import scalafx.application.{JFXApp3, Platform}
 import scalafx.beans.property.*
@@ -13,18 +11,18 @@ import scalafx.scene.layout.{StackPane, VBox}
 import scalafx.scene.paint.Color
 import scalafx.scene.paint.Color.*
 import scalafx.scene.shape.{Rectangle, Sphere}
-import tetris.ConfigGameConstants.*
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.Random
 
-object Tetris extends JFXApp3 {
+object Tetris extends JFXApp3 with TetrisConfig {
 
   // TODO
   // - Add score to the pause/end-game text (frame /100 ?)
   // - Increase speed over time
   // - Add option to see where shape would land if collides at current position and orientation?
+  // - Increase speed
 
   override def start(): Unit = {
     val state: ObjectProperty[State]      = ObjectProperty(initialState)
@@ -44,7 +42,7 @@ object Tetris extends JFXApp3 {
       height = stageYBoundary
       scene = new Scene(sceneXBoundary, sceneYBoundary) {
         fill = Black
-        content = state.value.generateAllObjects ++ List(state.value.displayText(), State.thresholdLine)
+        content = state.value.generateAllObjects ++ List(state.value.displayText(frame.value), State.thresholdLine)
         onKeyPressed = handleKeyPress(_)
         state.onChange {
           state.update(state.value.checkIfOverThreshold())
@@ -53,7 +51,7 @@ object Tetris extends JFXApp3 {
             case GameAtStart | GamePaused | Collision => frameIncrementor.update(0)
           }
           Platform.runLater {
-            content = state.value.generateAllObjects ++ List(state.value.displayText(), State.thresholdLine)
+            content = state.value.generateAllObjects ++ List(state.value.displayText(frame.value), State.thresholdLine)
           }
         }
       }
@@ -94,6 +92,7 @@ object Tetris extends JFXApp3 {
         state.update(state.value.rotateShape(AntiClockwiseRotate))
       case KeyCode.DOWN =>
         println("""\\\ Down ///""")
+        frame.update(frame.value + 5)
         state.update(state.value.dropShape())
       case KeyCode.R =>
         println("*** Game RESET ***")

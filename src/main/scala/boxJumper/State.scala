@@ -1,9 +1,8 @@
 package boxJumper
 
-import boxJumper.ConfigGameConstants.*
+import boxJumper.BoxJumper.*
 import boxJumper.State.{displayLowerBoundary, square}
 import common.*
-import common.ConfigGameConstants.*
 import scalafx.beans.property.BooleanProperty
 import scalafx.geometry.Pos
 import scalafx.scene.layout.VBox

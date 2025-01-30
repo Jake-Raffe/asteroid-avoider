@@ -1,9 +1,8 @@
 package tetris
 
-import common.ConfigGameConstants.objectWidth
-import common.{GameAtStart, GamePaused, ObjectLocation}
+import common.{GameAtStart, GameConstants, GamePaused, ObjectLocation}
 
-object ConfigGameConstants {
+trait TetrisConfig extends GameConstants {
 
   val sceneXBoundary: Double = 300
   val sceneYBoundary: Double = 600

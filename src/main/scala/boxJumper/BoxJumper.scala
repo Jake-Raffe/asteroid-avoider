@@ -1,8 +1,6 @@
 package boxJumper
 
-import boxJumper.ConfigGameConstants.*
 import common.*
-import common.ConfigGameConstants.objectWidth
 import javafx.scene.input.{KeyCode, KeyEvent}
 import scalafx.application.{JFXApp3, Platform}
 import scalafx.beans.property.*
@@ -18,7 +16,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.Random
 
-object BoxJumper extends JFXApp3 {
+object BoxJumper extends JFXApp3 with BoxJumperConfig {
 
   // TODO
   // - Add random elements and variance to the obstacles

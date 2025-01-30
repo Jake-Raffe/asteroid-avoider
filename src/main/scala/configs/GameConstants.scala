@@ -1,10 +1,10 @@
-package test
+package configs
 
 import common.{Collision, GameAtStart, GameState}
 import scalafx.scene.paint.Color.{Black, White}
 import scalafx.scene.text.{Font, Text}
 
-trait TESTGameConstants {
+trait GameConstants {
 
   val gameTitle: String
 

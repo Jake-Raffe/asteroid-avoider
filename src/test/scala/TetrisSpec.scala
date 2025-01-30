@@ -1,8 +1,8 @@
-import common.ConfigGameConstants.objectWidth
 import common.ObjectLocation
+import configs.TetrisConfig.objectWidth
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.wordspec.AnyWordSpec
-import tetris.ExistingBlocks
+import states.ExistingBlocks
 
 import java.io.FileNotFoundException
 

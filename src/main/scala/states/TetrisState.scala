@@ -1,6 +1,7 @@
-package tetris
+package states
 
 import common.*
+import configs.TetrisConfig.*
 import scalafx.beans.property.BooleanProperty
 import scalafx.geometry.Pos
 import scalafx.scene.layout.VBox
@@ -8,26 +9,26 @@ import scalafx.scene.paint.Color
 import scalafx.scene.paint.Color.{Black, Grey, White}
 import scalafx.scene.shape.{Line, Rectangle}
 import scalafx.scene.text.{Font, Text}
-import tetris.State.*
-import tetris.Tetris.*
-import tetris.Tetris.initialSquare.{maxShapeTypes, newShapeMap}
+import states.TetrisState.thresholdLine
+import games.Tetris.*
 
 import scala.annotation.tailrec
 import scala.util.Random
 
-case class State(currentShape: Shape, existingBlocks: ExistingBlocks, gameState: GameState) {
+case class TetrisState(currentShape: TetrisShape, existingBlocks: ExistingBlocks, gameState: GameState) extends State {
+  override val currentGameState: GameState = this.gameState
 
-  def startGame(): State = State(currentShape, existingBlocks, GameInProgress)
-  def pauseGame(): State = State(currentShape, existingBlocks, GamePaused)
+  def startGame(): TetrisState = TetrisState(currentShape, existingBlocks, GameInProgress)
+  def pauseGame(): TetrisState = TetrisState(currentShape, existingBlocks, GamePaused)
 
-  def checkIfOverThreshold(): State = {
+  def checkIfOverThreshold(): TetrisState = {
     val updatedGameState = if (existingBlocks.squares.exists(_.yAxis < thresholdLine.startY.toDouble)) Collision else gameState
-    State(currentShape, existingBlocks, updatedGameState)
+    TetrisState(currentShape, existingBlocks, updatedGameState)
   }
 
   def generateAllObjects: List[Rectangle] = LowerBoundary.toDisplayObjects ++ existingBlocks.toDisplayObjects ++ currentShape.toDisplayObjects
 
-  def moveShape(direction: MovementDirection): State =
+  def moveShape(direction: MovementDirection): TetrisState =
     if (gameState == GameInProgress) {
       val newPosition = direction match {
         case Left if currentShape.leftBoundary == 0                => currentShape
@@ -36,40 +37,40 @@ case class State(currentShape: Shape, existingBlocks: ExistingBlocks, gameState:
         case Right                                                 => currentShape.moveRight()
       }
       if (objectCollision(newPosition))
-        State(createNewShape(currentShape), existingBlocks.addShape(currentShape), gameState)
+        TetrisState(createNewShape(currentShape), existingBlocks.addShape(currentShape), gameState)
       else
-        State(newPosition, existingBlocks, gameState)
-    } else State(currentShape, existingBlocks, gameState)
+        TetrisState(newPosition, existingBlocks, gameState)
+    } else TetrisState(currentShape, existingBlocks, gameState)
 
-  def rotateShape(rotation: RotationDirection): State = // TODO this and moveShape are complicated but similar. Simplify and combine?
+  def rotateShape(rotation: RotationDirection): TetrisState = // TODO this and moveShape are complicated but similar. Simplify and combine?
     if (gameState == GameInProgress) {
       val newPosition            = currentShape.rotate(rotation)
       val collision              = objectCollision(newPosition)
       val newPositionOutOfBounds = newPosition.leftBoundary < 0 || newPosition.rightBoundary > stageXBoundary
       val shape                  = if (newPositionOutOfBounds) currentShape else if (collision) createNewShape(currentShape) else newPosition
       val newExistingBlocks      = if (collision) existingBlocks.addShape(currentShape) else existingBlocks
-      State(shape, newExistingBlocks, gameState)
-    } else State(currentShape, existingBlocks, gameState)
+      TetrisState(shape, newExistingBlocks, gameState)
+    } else TetrisState(currentShape, existingBlocks, gameState)
 
-  def lowerShapeOnce(): State =
-    if (objectCollision(currentShape.moveDown())) State(createNewShape(currentShape), existingBlocks.addShape(currentShape), gameState)
-    else State(currentShape.moveDown(), existingBlocks, gameState)
+  def lowerShapeOnce(): TetrisState =
+    if (objectCollision(currentShape.moveDown())) TetrisState(createNewShape(currentShape), existingBlocks.addShape(currentShape), gameState)
+    else TetrisState(currentShape.moveDown(), existingBlocks, gameState)
 
-  def dropShape(): State = {
+  def dropShape(): TetrisState = {
     @tailrec
-    def dropShapeTillBottom(newPosition: Shape, inc: Int): ExistingBlocks = {
+    def dropShapeTillBottom(newPosition: TetrisShape, inc: Int): ExistingBlocks = {
       val collision = objectCollision(newPosition.moveDown())
       if (objectCollision(newPosition.moveDown())) existingBlocks.addShape(newPosition)
       else dropShapeTillBottom(newPosition.moveDown(), inc + 1)
     }
 
-    State(createNewShape(currentShape), dropShapeTillBottom(currentShape, 0), gameState)
+    TetrisState(createNewShape(currentShape), dropShapeTillBottom(currentShape, 0), gameState)
   }
 
-  private def objectCollision(shape: Shape): Boolean = shape.buildShape.exists(existingBlocks.existingPlusFloor.contains(_))
+  private def objectCollision(shape: TetrisShape): Boolean = shape.buildShape.exists(existingBlocks.existingPlusFloor.contains(_))
 
   val random = new Random()
-  private def createNewShape(previousShape: Shape): Shape = {
+  private def createNewShape(previousShape: TetrisShape): TetrisShape = {
     val previousShapeType = previousShape.shapeType
     var newShapeType      = previousShapeType
     while (newShapeType == previousShapeType)
@@ -89,7 +90,7 @@ case class State(currentShape: Shape, existingBlocks: ExistingBlocks, gameState:
   }
 }
 
-object State {
+object TetrisState {
 
   def square(objectLocation: ObjectLocation, colour: Color): Rectangle = new Rectangle {
     x = objectLocation.xAxis

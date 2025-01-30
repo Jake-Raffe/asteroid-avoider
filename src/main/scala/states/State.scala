@@ -1,4 +1,4 @@
-package test
+package states
 
 import common.GameState
 import scalafx.scene.layout.VBox

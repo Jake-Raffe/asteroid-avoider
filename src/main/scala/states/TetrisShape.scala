@@ -1,15 +1,15 @@
-package tetris
+package states
 
 import common.*
+import configs.TetrisConfig.*
 import scalafx.scene.paint.Color.{Green, Grey, Silver, White}
 import scalafx.scene.shape.Rectangle
-import tetris.State.square
-import tetris.Tetris.*
+import states.TetrisState.square
+import games.Tetris.*
 
 import scala.annotation.tailrec
 
-trait Shape {
-  val maxShapeTypes: Int = 8
+trait TetrisShape {
   val shapeType: Int
   def centralPoint: ObjectLocation
   def orientation: Orientation
@@ -42,21 +42,10 @@ trait Shape {
     createNewShape(centralPoint, newOrientation).asInstanceOf[this.type]
   }
 
-  protected def createNewShape(newCentralPoint: ObjectLocation, newOrientation: Orientation): Shape
-
-  val newShapeMap: Map[Int, (ObjectLocation, Orientation) => Shape] =
-    Map(
-      1 -> Square.apply,
-      2 -> Line.apply,
-      3 -> RectangleShape.apply,
-      4 -> LShape.apply,
-      5 -> LShapeRev.apply,
-      6 -> Zigzag.apply,
-      7 -> ZigzagRev.apply,
-      8 -> TShape.apply)
+  protected def createNewShape(newCentralPoint: ObjectLocation, newOrientation: Orientation): TetrisShape
 }
 
-case class Square(centralPoint: ObjectLocation, orientation: Orientation) extends Shape {
+case class Square(centralPoint: ObjectLocation, orientation: Orientation) extends TetrisShape {
   override val shapeType                               = 1
   val shape: List[ObjectLocation]                      = List(centralPoint, centralPoint.moveLeft, centralPoint.moveUp, centralPoint.moveLeft.moveUp)
   override def neutralPosition: List[ObjectLocation]   = shape
@@ -71,7 +60,7 @@ case class Square(centralPoint: ObjectLocation, orientation: Orientation) extend
     Square(newCentralPoint, newOrientation)
 }
 
-case class Line(centralPoint: ObjectLocation, orientation: Orientation) extends Shape {
+case class Line(centralPoint: ObjectLocation, orientation: Orientation) extends TetrisShape {
   override val shapeType                             = 2
   override def neutralPosition: List[ObjectLocation] = List(centralPoint, centralPoint.moveUp, centralPoint.moveUp.moveUp, centralPoint.moveDown)
   override def clockwisePosition: List[ObjectLocation] =
@@ -101,7 +90,7 @@ case class Line(centralPoint: ObjectLocation, orientation: Orientation) extends 
     Line(newCentralPoint, newOrientation)
 }
 
-case class RectangleShape(centralPoint: ObjectLocation, orientation: Orientation) extends Shape {
+case class RectangleShape(centralPoint: ObjectLocation, orientation: Orientation) extends TetrisShape {
   override val shapeType = 3
   override def neutralPosition: List[ObjectLocation] = List(
     centralPoint,
@@ -149,7 +138,7 @@ case class RectangleShape(centralPoint: ObjectLocation, orientation: Orientation
     RectangleShape(newCentralPoint, newOrientation)
 }
 
-case class LShape(centralPoint: ObjectLocation, orientation: Orientation) extends Shape {
+case class LShape(centralPoint: ObjectLocation, orientation: Orientation) extends TetrisShape {
   override val shapeType = 4
   override def neutralPosition: List[ObjectLocation] =
     List(centralPoint, centralPoint.moveLeft, centralPoint.moveLeft.moveUp, centralPoint.moveLeft.moveUp.moveUp)
@@ -176,7 +165,7 @@ case class LShape(centralPoint: ObjectLocation, orientation: Orientation) extend
     LShape(newCentralPoint, newOrientation)
 }
 
-case class LShapeRev(centralPoint: ObjectLocation, orientation: Orientation) extends Shape {
+case class LShapeRev(centralPoint: ObjectLocation, orientation: Orientation) extends TetrisShape {
   override val shapeType = 5
   override def neutralPosition: List[ObjectLocation] =
     List(centralPoint, centralPoint.moveLeft, centralPoint.moveUp, centralPoint.moveUp.moveUp)
@@ -203,7 +192,7 @@ case class LShapeRev(centralPoint: ObjectLocation, orientation: Orientation) ext
     LShapeRev(newCentralPoint, newOrientation)
 }
 
-case class Zigzag(centralPoint: ObjectLocation, orientation: Orientation) extends Shape {
+case class Zigzag(centralPoint: ObjectLocation, orientation: Orientation) extends TetrisShape {
   override val shapeType = 6
   override def neutralPosition: List[ObjectLocation] =
     List(centralPoint, centralPoint.moveRight, centralPoint.moveUp, centralPoint.moveLeft.moveUp)
@@ -230,7 +219,7 @@ case class Zigzag(centralPoint: ObjectLocation, orientation: Orientation) extend
     Zigzag(newCentralPoint, newOrientation)
 }
 
-case class ZigzagRev(centralPoint: ObjectLocation, orientation: Orientation) extends Shape {
+case class ZigzagRev(centralPoint: ObjectLocation, orientation: Orientation) extends TetrisShape {
   override val shapeType = 7
   override def neutralPosition: List[ObjectLocation] =
     List(centralPoint, centralPoint.moveLeft, centralPoint.moveUp, centralPoint.moveRight.moveUp)
@@ -257,7 +246,7 @@ case class ZigzagRev(centralPoint: ObjectLocation, orientation: Orientation) ext
     ZigzagRev(newCentralPoint, newOrientation)
 }
 
-case class TShape(centralPoint: ObjectLocation, orientation: Orientation) extends Shape {
+case class TShape(centralPoint: ObjectLocation, orientation: Orientation) extends TetrisShape {
   override val shapeType = 8
   override def neutralPosition: List[ObjectLocation] =
     List(centralPoint, centralPoint.moveUp, centralPoint.moveUp.moveLeft, centralPoint.moveUp.moveRight)
@@ -288,7 +277,7 @@ case class ExistingBlocks(squares: List[ObjectLocation]) {
 
   val existingPlusFloor: List[ObjectLocation] = squares ++ LowerBoundary.createBoundary()
 
-  def addShape(newShape: Shape): ExistingBlocks = ExistingBlocks(squares ++ newShape.buildShape).removeRowIfFull()
+  def addShape(newShape: TetrisShape): ExistingBlocks = ExistingBlocks(squares ++ newShape.buildShape).removeRowIfFull()
 
   def removeRowIfFull(): ExistingBlocks = {
     val blocksNeededForFullRow     = stageXBoundary / objectWidth

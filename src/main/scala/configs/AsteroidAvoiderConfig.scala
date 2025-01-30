@@ -1,8 +1,9 @@
-package test
+package configs
 
-import common.{GameAtStart, GameConstants, ObjectLocation}
+import common.{GameAtStart, ObjectLocation}
+import states.AsteroidAvoiderState
 
-case object TESTAsteroidAvoiderConfig extends TESTGameConstants {
+case object AsteroidAvoiderConfig extends GameConstants {
 
   val gameTitle: String = "Asteroid Avoider"
 
@@ -19,7 +20,7 @@ case object TESTAsteroidAvoiderConfig extends TESTGameConstants {
 
   val scrollSpeed: Long = 800
 
-  val initialState: TESTAsteroidAvoiderState = TESTAsteroidAvoiderState(shipStartPosition, List.empty[ObjectLocation], GameAtStart)
+  val initialState: AsteroidAvoiderState = AsteroidAvoiderState(shipStartPosition, List.empty[ObjectLocation], GameAtStart)
 
   val frameScrollMap: Map[Int, Long] =
     Map(

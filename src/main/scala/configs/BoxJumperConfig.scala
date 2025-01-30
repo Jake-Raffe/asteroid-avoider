@@ -1,8 +1,12 @@
-package boxJumper
+package configs
 
-import common.{GameAtStart, GameConstants, GamePaused, ObjectLocation}
+import common.{GameAtStart, GamePaused, ObjectLocation}
+import configs.GameConstants
+import states.BoxJumperState
 
-trait BoxJumperConfig extends GameConstants {
+case object BoxJumperConfig extends GameConstants {
+
+  val gameTitle: String = "Box Jumper"
 
   val sceneXBoundary: Double = 600
   val sceneYBoundary: Double = 300
@@ -12,11 +16,11 @@ trait BoxJumperConfig extends GameConstants {
   val runwayYPosition: Double = sceneYBoundary - objectWidth
   val playerXPosition: Double = 3 * objectWidth
 
-  val runSpeed: Long = 10
+  val scrollSpeed: Long = 10
 
   val scrollDistance: Long = 2
 
-  val initialState: State = State(0, List(stageXBoundary), GameAtStart)
+  val initialState: BoxJumperState = BoxJumperState(0, List(stageXBoundary), GameAtStart)
 
   val frameScrollMap: Map[Int, Long] = Map(1000 -> 1, 2000 -> 2, 3000 -> 3)
 

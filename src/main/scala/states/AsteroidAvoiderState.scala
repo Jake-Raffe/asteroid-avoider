@@ -1,46 +1,49 @@
-package asteroidAvoider
+package states
 
-import asteroidAvoider.AsteroidAvoider.*
-import asteroidAvoider.State.{shipHasCrashed, square}
 import common.*
+import configs.AsteroidAvoiderConfig.*
 import scalafx.beans.property.BooleanProperty
 import scalafx.geometry.Pos
 import scalafx.scene.layout.VBox
 import scalafx.scene.paint.Color
 import scalafx.scene.paint.Color.{Black, Red, White}
 import scalafx.scene.shape.Rectangle
+import states.AsteroidAvoiderState.{shipHasCrashed, square}
 
 import scala.util.Random
 
-case class State(shipPosition: ObjectLocation, asteroids: List[ObjectLocation], gameState: GameState) {
+case class AsteroidAvoiderState(shipPosition: ObjectLocation, asteroids: List[ObjectLocation], gameState: GameState) extends State {
+  override val currentGameState: GameState = this.gameState
+
   private val asteroidColour: Color = if (gameState == Collision) Red else White
   private val shipColour: Color     = if (gameState == Collision) White else Red
 
-  def startGame(): State = State(shipPosition, asteroids, GameInProgress)
-  def pauseGame(): State = State(shipPosition, asteroids, GamePaused)
+  def startGame(): AsteroidAvoiderState = AsteroidAvoiderState(shipPosition, asteroids, GameInProgress)
+  def pauseGame(): AsteroidAvoiderState = AsteroidAvoiderState(shipPosition, asteroids, GamePaused)
 
   def generateAllObjects: List[Rectangle] = asteroids.map(square(_, asteroidColour)).appended(square(shipPosition, shipColour))
 
-  def moveShip(direction: MovementDirection): State = // TODO add vertical ship movement?
+  def moveShip(direction: MovementDirection): AsteroidAvoiderState = // TODO add vertical ship movement?
     if (gameState == GameInProgress) {
       val attemptedPosition: Double = shipPosition.xAxis + direction.xAxisMovement
       val shipOutOfBounds: Boolean  = attemptedPosition < 0 || attemptedPosition > sceneXBoundary
 
       if (shipHasCrashed(ObjectLocation(attemptedPosition, shipYPosition), asteroids)) {
         val crashedPosition = shipPosition.copy(xAxis = shipPosition.xAxis + (direction.xAxisMovement / 2))
-        State(crashedPosition, asteroids, Collision)
+        AsteroidAvoiderState(crashedPosition, asteroids, Collision)
       } else {
         val newShipPosition: ObjectLocation = if (shipOutOfBounds) shipPosition else shipPosition.copy(xAxis = attemptedPosition)
-        State(newShipPosition, asteroids, gameState)
+        AsteroidAvoiderState(newShipPosition, asteroids, gameState)
       }
-    } else State(shipPosition, asteroids, gameState)
+    } else AsteroidAvoiderState(shipPosition, asteroids, gameState)
 
-  def verticalScroll(): State = {
+  def verticalScroll(): AsteroidAvoiderState = {
     val firstNewAsteroid  = createNewAsteroid(asteroids.headOption.getOrElse(shipStartPosition))
     val secondNewAsteroid = createNewAsteroid(firstNewAsteroid)
     val scrolledAsteroids = asteroids.flatMap(moveAsteroid) ++ List(firstNewAsteroid, secondNewAsteroid)
-    if (shipHasCrashed(shipPosition, scrolledAsteroids)) State(shipPosition, asteroids.flatMap(moveAsteroidHalfPosition), Collision)
-    else State(shipPosition, scrolledAsteroids, gameState)
+    if (shipHasCrashed(shipPosition, scrolledAsteroids))
+      AsteroidAvoiderState(shipPosition, asteroids.flatMap(moveAsteroidHalfPosition), Collision)
+    else AsteroidAvoiderState(shipPosition, scrolledAsteroids, gameState)
   }
 
   // Scrolls single asteroid one step down, if past boundary then asteroid is removed
@@ -63,7 +66,7 @@ case class State(shipPosition: ObjectLocation, asteroids: List[ObjectLocation], 
   }
 
   def displayText(score: Int): VBox = {
-    val text = createTextWithScore(gameState, score / 10)
+    val text = createTextWithScore(gameState, score / 5)
     new VBox {
       layoutX = (stageXBoundary - text.boundsInLocal().getWidth) / 2
       layoutY = sceneYBoundary / 3
@@ -74,7 +77,7 @@ case class State(shipPosition: ObjectLocation, asteroids: List[ObjectLocation], 
   }
 }
 
-object State {
+object AsteroidAvoiderState {
 
   // Each object (ship and asteroids) is created with this method
   def square(objectLocation: ObjectLocation, colour: Color): Rectangle = new Rectangle {

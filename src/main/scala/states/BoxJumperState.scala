@@ -1,7 +1,6 @@
-package boxJumper
+package states
 
-import boxJumper.BoxJumper.*
-import boxJumper.State.{displayLowerBoundary, square}
+import _root_.states.BoxJumperState.{displayLowerBoundary, square}
 import common.*
 import scalafx.beans.property.BooleanProperty
 import scalafx.geometry.Pos
@@ -13,13 +12,15 @@ import scalafx.scene.text.{Font, Text}
 
 import scala.annotation.tailrec
 import scala.util.Random
+import configs.BoxJumperConfig.*
 
-case class State(jumpFrame: Int, obstacleXPositions: List[Double], gameState: GameState) {
+case class BoxJumperState(jumpFrame: Int, obstacleXPositions: List[Double], gameState: GameState) extends State {
+  override val currentGameState: GameState = this.gameState
 
-  val playerHeight = jumpMap(jumpFrame)
+  private val playerHeight = jumpMap(jumpFrame)
 
-  def startGame(): State = State(jumpFrame, obstacleXPositions, GameInProgress)
-  def pauseGame(): State = State(jumpFrame, obstacleXPositions, GamePaused)
+  def startGame(): BoxJumperState = BoxJumperState(jumpFrame, obstacleXPositions, GameInProgress)
+  def pauseGame(): BoxJumperState = BoxJumperState(jumpFrame, obstacleXPositions, GamePaused)
 
   def generateAllObjects: List[Rectangle] = displayLowerBoundary ++ displayObstacles.appended(displayPlayer)
 
@@ -27,19 +28,19 @@ case class State(jumpFrame: Int, obstacleXPositions: List[Double], gameState: Ga
   private val displayObstacles: List[Rectangle] =
     obstacleXPositions.map(x => square(ObjectLocation(x, runwayYPosition), Silver))
 
-  def jump(): State = State(1, obstacleXPositions, gameState)
+  def jump(): BoxJumperState = BoxJumperState(1, obstacleXPositions, gameState)
 
   private val incrementJumpFrame: Int = jumpFrame match {
     case 0 | 60  => 0
     case jumping => jumping + 1
   }
 
-  def horizontalScroll(): State = {
+  def horizontalScroll(): BoxJumperState = {
     val scrolledObstacles = obstacleXPositions.filter(_ > 0).map(_ - scrollDistance)
     val allObstacles =
       if (scrolledObstacles.length > 3 || scrolledObstacles.exists(_ > (3 * stageXBoundary / 4))) scrolledObstacles
       else scrolledObstacles.appended(stageXBoundary)
-    if (objectCollision()) State(jumpFrame, allObstacles, Collision) else State(incrementJumpFrame, allObstacles, gameState)
+    if (objectCollision()) BoxJumperState(jumpFrame, allObstacles, Collision) else BoxJumperState(incrementJumpFrame, allObstacles, gameState)
   }
 
   private def objectCollision(): Boolean = {
@@ -64,7 +65,7 @@ case class State(jumpFrame: Int, obstacleXPositions: List[Double], gameState: Ga
   }
 }
 
-object State {
+object BoxJumperState {
 
   def square(objectLocation: ObjectLocation, colour: Color): Rectangle = new Rectangle {
     x = objectLocation.xAxis

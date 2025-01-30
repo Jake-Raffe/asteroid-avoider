@@ -1,7 +1,7 @@
 package common
 
-import asteroidAvoider.AsteroidAvoider.movementAmount
-import tetris.Orientation
+import configs.BoxJumperConfig.movementAmount
+import states.Orientation
 
 trait MovementDirection {
   val xAxisMovement: Double

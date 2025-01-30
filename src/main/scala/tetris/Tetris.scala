@@ -19,7 +19,6 @@ import scala.util.Random
 object Tetris extends JFXApp3 with TetrisConfig {
 
   // TODO
-  // - Add score to the pause/end-game text (frame /100 ?)
   // - Increase speed over time
   // - Add option to see where shape would land if collides at current position and orientation?
   // - Increase speed
